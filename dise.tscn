@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://6nruox5tc2xk"]
+
+[ext_resource type="PhysicsMaterial" uid="uid://h8komj062qq6" path="res://Materials/dice.tres" id="1_8lxr0"]
+[ext_resource type="Script" path="res://Old/dice.gd" id="1_xp0uk"]
+[ext_resource type="Texture2D" uid="uid://coelluspppiu1" path="res://Dice/Dice3.png" id="2_dtbeu"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v86yp"]
+
+[node name="Area2D" type="Area2D"]
+position = Vector2(319, 190)
+script = ExtResource("1_xp0uk")
+isActive = true
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+position = Vector2(1, 0)
+input_pickable = true
+physics_material_override = ExtResource("1_8lxr0")
+gravity_scale = 0.0
+linear_damp = 0.3
+
+[node name="DiceSprite" type="Sprite2D" parent="RigidBody2D"]
+position = Vector2(1, -1)
+scale = Vector2(0.455, 0.455)
+texture = ExtResource("2_dtbeu")
+
+[node name="DiceCollisionShape" type="CollisionShape2D" parent="RigidBody2D"]
+position = Vector2(2, 1)
+scale = Vector2(3.16, 3.16)
+shape = SubResource("CircleShape2D_v86yp")
+
+[node name="DiceTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2, 1)
+scale = Vector2(3.16, 3.16)
+shape = SubResource("CircleShape2D_v86yp")
+
+[connection signal="timeout" from="DiceTimer" to="." method="_on_timer_timeout"]

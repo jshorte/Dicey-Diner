@@ -1,0 +1,177 @@
+[gd_scene load_steps=4 format=3 uid="uid://od82u7paivg4"]
+
+[ext_resource type="Texture2D" uid="uid://b3h0w0apfdc7t" path="res://Art/icon.svg" id="1_afo07"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_3kibq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nhxrp"]
+size = Vector2(5136.84, 128)
+
+[node name="Wall" type="StaticBody2D"]
+scale = Vector2(0.19, 0.19)
+disable_mode = 2
+physics_material_override = SubResource("PhysicsMaterial_3kibq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(65, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(192, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(320, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D4" type="Sprite2D" parent="."]
+position = Vector2(447, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D5" type="Sprite2D" parent="."]
+position = Vector2(576, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D6" type="Sprite2D" parent="."]
+position = Vector2(704, 67)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D7" type="Sprite2D" parent="."]
+position = Vector2(831, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D8" type="Sprite2D" parent="."]
+position = Vector2(959, 67)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D9" type="Sprite2D" parent="."]
+position = Vector2(1086, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D10" type="Sprite2D" parent="."]
+position = Vector2(1215, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D11" type="Sprite2D" parent="."]
+position = Vector2(1344, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D12" type="Sprite2D" parent="."]
+position = Vector2(1471, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D13" type="Sprite2D" parent="."]
+position = Vector2(1599, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D14" type="Sprite2D" parent="."]
+position = Vector2(1726, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D15" type="Sprite2D" parent="."]
+position = Vector2(1855, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D16" type="Sprite2D" parent="."]
+position = Vector2(1984, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D17" type="Sprite2D" parent="."]
+position = Vector2(2111, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D18" type="Sprite2D" parent="."]
+position = Vector2(2239, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D19" type="Sprite2D" parent="."]
+position = Vector2(2366, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D20" type="Sprite2D" parent="."]
+position = Vector2(2495, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D21" type="Sprite2D" parent="."]
+position = Vector2(2632.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D22" type="Sprite2D" parent="."]
+position = Vector2(2759.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D23" type="Sprite2D" parent="."]
+position = Vector2(2887.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D24" type="Sprite2D" parent="."]
+position = Vector2(3014.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D25" type="Sprite2D" parent="."]
+position = Vector2(3143.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D26" type="Sprite2D" parent="."]
+position = Vector2(3271.42, 67)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D27" type="Sprite2D" parent="."]
+position = Vector2(3398.42, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D28" type="Sprite2D" parent="."]
+position = Vector2(3526.42, 67)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D29" type="Sprite2D" parent="."]
+position = Vector2(3653.42, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D30" type="Sprite2D" parent="."]
+position = Vector2(3782.42, 66)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D31" type="Sprite2D" parent="."]
+position = Vector2(3911.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D32" type="Sprite2D" parent="."]
+position = Vector2(4038.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D33" type="Sprite2D" parent="."]
+position = Vector2(4166.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D34" type="Sprite2D" parent="."]
+position = Vector2(4293.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D35" type="Sprite2D" parent="."]
+position = Vector2(4422.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D36" type="Sprite2D" parent="."]
+position = Vector2(4551.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D37" type="Sprite2D" parent="."]
+position = Vector2(4678.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D38" type="Sprite2D" parent="."]
+position = Vector2(4806.42, 65)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D39" type="Sprite2D" parent="."]
+position = Vector2(4933.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="Sprite2D40" type="Sprite2D" parent="."]
+position = Vector2(5062.42, 64)
+texture = ExtResource("1_afo07")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2568.42, 64)
+shape = SubResource("RectangleShape2D_nhxrp")

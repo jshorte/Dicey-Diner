@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://1jg7ger8mi7c"]
+
+[ext_resource type="Script" path="res://dice.gd" id="1_krjn3"]
+[ext_resource type="Texture2D" uid="uid://b3h0w0apfdc7t" path="res://icon.svg" id="1_skwcv"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tnfnq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_62yk4"]
+
+[node name="Dice" type="Node2D"]
+position = Vector2(611, 294)
+script = ExtResource("1_krjn3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(1, -1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_skwcv")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+physics_material_override = SubResource("PhysicsMaterial_tnfnq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+position = Vector2(1, -1)
+scale = Vector2(3.16, 3.16)
+shape = SubResource("CircleShape2D_62yk4")

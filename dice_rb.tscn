@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://xafapfxhwui1"]
+
+[ext_resource type="Script" path="res://Old/dice.gd" id="1_8afs3"]
+[ext_resource type="Texture2D" uid="uid://coelluspppiu1" path="res://Dice/Dice3.png" id="2_i3b7l"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tvrdr"]
+friction = 0.1
+bounce = 0.5
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jrs0l"]
+
+[node name="RigidBody2D" type="RigidBody2D"]
+position = Vector2(637, 339)
+input_pickable = true
+physics_material_override = SubResource("PhysicsMaterial_tvrdr")
+gravity_scale = 0.0
+continuous_cd = 2
+max_contacts_reported = 8
+contact_monitor = true
+linear_damp = 0.3
+script = ExtResource("1_8afs3")
+isActive = true
+
+[node name="DiceSprite" type="Sprite2D" parent="."]
+position = Vector2(1, -1)
+scale = Vector2(0.455, 0.455)
+texture = ExtResource("2_i3b7l")
+
+[node name="DiceCollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2(1, 1)
+scale = Vector2(3.16, 3.16)
+shape = SubResource("CircleShape2D_jrs0l")
+
+[node name="DiceTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true

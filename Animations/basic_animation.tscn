@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3 uid="uid://c66oa783otkqc"]
+
+[ext_resource type="Texture2D" uid="uid://diesqot22jfa2" path="res://Art/Dice/1.png" id="1_0p2bs"]
+[ext_resource type="Texture2D" uid="uid://b5fyv5gbnw5r0" path="res://Art/Dice/2.png" id="2_rdcn2"]
+[ext_resource type="Texture2D" uid="uid://br0bp5eaviuj7" path="res://Art/Dice/3.png" id="3_3x0k8"]
+[ext_resource type="Texture2D" uid="uid://bny8wxfqmpnvc" path="res://Art/Dice/4.png" id="4_6usr1"]
+[ext_resource type="Texture2D" uid="uid://bbmaqr2y61cq6" path="res://Art/Dice/5.png" id="5_dgcv1"]
+[ext_resource type="Texture2D" uid="uid://b3buqowm6b5tn" path="res://Art/Dice/6.png" id="6_h64hs"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q40nn"]
+resource_name = "BasicAnim"
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_0p2bs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_rdcn2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_3x0k8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_6usr1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_dgcv1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_h64hs")
+}],
+"loop": true,
+"name": &"All",
+"speed": 12.0
+}]
+
+[node name="BasicAnimation" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_q40nn")
+animation = &"All"

@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3 uid="uid://5mykxs8mxcbl"]
+
+[ext_resource type="PackedScene" uid="uid://1jg7ger8mi7c" path="res://dice.tscn" id="1_qffur"]
+[ext_resource type="PackedScene" uid="uid://od82u7paivg4" path="res://wall.tscn" id="2_h8pgo"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Dice" parent="." instance=ExtResource("1_qffur")]
+
+[node name="Wall" parent="." instance=ExtResource("2_h8pgo")]
+
+[node name="Wall2" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(320, 0)
+
+[node name="Wall3" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(640, 1)
+
+[node name="Wall9" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(960, 1)
+
+[node name="Wall10" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(961, 584)
+
+[node name="Wall4" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(0, 584)
+
+[node name="Wall6" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(641, 584)
+
+[node name="Wall7" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(-63, 648)
+rotation = 4.71239
+
+[node name="Wall8" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(-64, 328)
+rotation = 4.71239
+
+[node name="Wall11" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(1154, 584)
+rotation = 4.71239
+
+[node name="Wall12" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(1153, 264)
+rotation = 4.71239
+
+[node name="Wall13" parent="." instance=ExtResource("2_h8pgo")]
+position = Vector2(320, 585)

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cc07d8vm2jpof"]
+
+[ext_resource type="Texture2D" uid="uid://bp1h6obmtf5af" path="res://Art/BAM.png" id="1_vumqg"]
+
+[node name="BAM" type="Sprite2D"]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_vumqg")

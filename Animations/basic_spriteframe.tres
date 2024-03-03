@@ -1,0 +1,34 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://b7p5xj45h5fvf"]
+
+[ext_resource type="Texture2D" uid="uid://diesqot22jfa2" path="res://Art/Dice/1.png" id="1_4220j"]
+[ext_resource type="Texture2D" uid="uid://b5fyv5gbnw5r0" path="res://Art/Dice/2.png" id="2_58dnn"]
+[ext_resource type="Texture2D" uid="uid://br0bp5eaviuj7" path="res://Art/Dice/3.png" id="3_sqeik"]
+[ext_resource type="Texture2D" uid="uid://bny8wxfqmpnvc" path="res://Art/Dice/4.png" id="4_gxe7e"]
+[ext_resource type="Texture2D" uid="uid://bbmaqr2y61cq6" path="res://Art/Dice/5.png" id="5_guhh3"]
+[ext_resource type="Texture2D" uid="uid://b3buqowm6b5tn" path="res://Art/Dice/6.png" id="6_ntpm5"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_4220j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_58dnn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_sqeik")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_gxe7e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_guhh3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ntpm5")
+}],
+"loop": true,
+"name": &"All",
+"speed": 12.0
+}]

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="base_dice" load_steps=2 format=3 uid="uid://dmsdn0xbu00w6"]
+
+[ext_resource type="Script" path="res://Resources/dice_base.gd" id="1_ptiun"]
+
+[resource]
+script = ExtResource("1_ptiun")
+dice_min = 1
+dice_max = 6
+dice_interval = 1
+dice_sprite_animation_path = "res://Animations/basic_spriteframe.tres"
+dice_type = 0

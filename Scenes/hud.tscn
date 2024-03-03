@@ -1,0 +1,242 @@
+[gd_scene load_steps=4 format=3 uid="uid://c78g4wg5yy8ay"]
+
+[ext_resource type="Script" path="res://Tweens/InfoPanelTween.gd" id="1_gbq8n"]
+[ext_resource type="Script" path="res://Tweens/ActivePanelTween.gd" id="1_rl1s0"]
+[ext_resource type="Script" path="res://Tweens/ScorePanelTween.gd" id="2_rwv2h"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Power Bar" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Top Bar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_gbq8n")
+
+[node name="Information Bar" type="Panel" parent="Top Bar"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 100.0
+
+[node name="Info_Show_Hide" type="Button" parent="Top Bar/Information Bar"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -25.0
+offset_top = 17.0
+offset_right = -7.0
+offset_bottom = 67.0
+grow_horizontal = 2
+grow_vertical = 0
+rotation = -1.5708
+toggle_mode = true
+text = "<"
+icon_alignment = 1
+
+[node name="Info Text" type="Label" parent="Top Bar/Information Bar"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Goals"
+horizontal_alignment = 1
+
+[node name="Main Text" type="Label" parent="Top Bar/Information Bar"]
+modulate = Color(0.392157, 0.878431, 0, 1)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 32.0
+offset_bottom = 56.0
+grow_horizontal = 2
+text = "Main Objective: Score over 100"
+horizontal_alignment = 1
+
+[node name="Optional Text" type="Label" parent="Top Bar/Information Bar"]
+modulate = Color(0.917647, 0.133333, 0, 1)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 56.0
+offset_bottom = 80.0
+grow_horizontal = 2
+text = "Optional: Do not lock dice"
+horizontal_alignment = 1
+
+[node name="Bottom Bar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Current Dice" type="Panel" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 696.0
+offset_top = 604.0
+offset_right = 1146.0
+offset_bottom = 704.0
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Current Dice"]
+layout_mode = 0
+offset_right = 449.0
+offset_bottom = 98.0
+
+[node name="Current Text" type="Label" parent="Bottom Bar/Current Dice/VBoxContainer"]
+layout_mode = 2
+text = "Current"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Bottom Bar/Current Dice/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Deck" type="Panel" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 604.0
+offset_right = 116.0
+offset_bottom = 704.0
+
+[node name="Deck Text" type="Label" parent="Bottom Bar/Deck"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Deck"
+horizontal_alignment = 1
+
+[node name="Discard" type="Panel" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 1160.0
+offset_top = 604.0
+offset_right = 1260.0
+offset_bottom = 704.0
+
+[node name="Discard Text" type="Label" parent="Bottom Bar/Discard"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Discard"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Upcoming Dice" type="Panel" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 604.0
+offset_right = 586.0
+offset_bottom = 704.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Upcoming Dice"]
+layout_mode = 0
+offset_right = 452.0
+offset_bottom = 98.0
+
+[node name="Next Text" type="Label" parent="Bottom Bar/Upcoming Dice/VBoxContainer"]
+layout_mode = 2
+text = "Next"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Bottom Bar/Upcoming Dice/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Active Panel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_rl1s0")
+
+[node name="Active" type="Panel" parent="Active Panel"]
+layout_mode = 0
+offset_top = 192.0
+offset_right = 200.0
+offset_bottom = 492.0
+
+[node name="Current Text" type="Label" parent="Active Panel/Active"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Influence"
+horizontal_alignment = 1
+
+[node name="Active_Show_Hide" type="Button" parent="Active Panel/Active"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -1.0
+offset_top = -25.0
+offset_right = 17.0
+offset_bottom = 25.0
+grow_horizontal = 0
+grow_vertical = 2
+toggle_mode = true
+text = ">"
+icon_alignment = 1
+
+[node name="Score Panel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_rwv2h")
+
+[node name="Score" type="Panel" parent="Score Panel"]
+layout_mode = 0
+offset_left = 1080.0
+offset_top = 192.0
+offset_right = 1280.0
+offset_bottom = 492.0
+
+[node name="Current Text" type="Label" parent="Score Panel/Score"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Score"
+horizontal_alignment = 1
+
+[node name="Score_Show_Hide" type="Button" parent="Score Panel/Score"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -17.0
+offset_top = -25.0
+offset_right = 1.0
+offset_bottom = 25.0
+grow_vertical = 2
+toggle_mode = true
+text = "<"
+icon_alignment = 1
+
+[connection signal="toggled" from="Top Bar/Information Bar/Info_Show_Hide" to="Top Bar" method="_on_info_show_hide_toggled"]
+[connection signal="pressed" from="Active Panel/Active/Active_Show_Hide" to="Active Panel" method="_on_active_show_hide_pressed"]
+[connection signal="toggled" from="Active Panel/Active/Active_Show_Hide" to="Active Panel" method="_on_active_show_hide_toggled"]
+[connection signal="toggled" from="Score Panel/Score/Score_Show_Hide" to="Score Panel" method="_on_score_show_hide_toggled"]
