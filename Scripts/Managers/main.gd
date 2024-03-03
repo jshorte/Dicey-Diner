@@ -102,6 +102,7 @@ func update_upcoming_panel(dice_array):
 		#TODO (Remove) Removed as positioning dealt with using V&H Boxes 
 		#sprite.position = Vector2(x, y)
 		#x += spacing
+		#TEST CHANGE
 
 
 func update_playable_panel(dice_array):	
