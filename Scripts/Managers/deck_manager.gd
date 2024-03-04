@@ -83,7 +83,7 @@ func load_player_dice(dice_type_array):
 	for type in dice_type_array:		
 		match type:
 			Global.DiceType.BASIC:				
-				var blank_dice = dice_scene.instantiate()
+				var blank_dice = dice_scene.instantiate()			
 				print("Pre Template: ", blank_dice.dice_template)
 				blank_dice.dice_template = load(basic_dice_template_path)
 				print("Post Template ", blank_dice.dice_template)

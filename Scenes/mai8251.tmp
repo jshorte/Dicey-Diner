@@ -41,7 +41,6 @@ position = Vector2(-2, -34)
 scale = Vector2(0.25, 0.25)
 
 [node name="Wall2" parent="." instance=ExtResource("2_ff80d")]
-visible = false
 position = Vector2(-1, 552)
 scale = Vector2(0.25, 0.25)
 
