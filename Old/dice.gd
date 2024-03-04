@@ -41,8 +41,6 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	
-	
 	if !isActive:
 		if(has_node("Arrow")): 			
 			get_node("Arrow").hide()		
@@ -140,36 +138,29 @@ func move_dice(dice_centre_position : Vector2):
 	#Make a bar which represents this clamped value
 	dice_rb.apply_central_impulse(-dir * impulse_strength)	
 
-
 #Grace period for velocity check
 func _on_timer_timeout() -> void:	
 	print(timed_out)
 	timed_out = true
 
-
 #Sent reference of dice to main to add to array
 func load_dice_deferred():
 	SignalManager.load_dice.emit(self)
-
 
 #Send reference of dice to set as active dice
 func active_dice_deferred():
 	SignalManager.get_active_dice.emit(self)
 
-
 #Send reference of dice to set currently hovered dice
 func dice_mouse_entered():
 	SignalManager.mouse_enter.emit(self)
 
-
 #Remove hovered in main
 func dice_mouse_exited():
 	SignalManager.mouse_exit.emit()
-
 
 func set_arrow_visiblity(visibility):
 	if visibility == show:
 		get_node("Arrow").show()
 	elif visibility == hide:
 		get_node("Arrow").hide()
-	

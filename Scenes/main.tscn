@@ -1,10 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://5mykxs8mxcbl"]
+[gd_scene load_steps=8 format=3 uid="uid://5mykxs8mxcbl"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/main.gd" id="1_g0uib"]
 [ext_resource type="PackedScene" uid="uid://od82u7paivg4" path="res://Scenes/wall.tscn" id="2_ff80d"]
 [ext_resource type="PackedScene" uid="uid://c78g4wg5yy8ay" path="res://Scenes/hud.tscn" id="3_8nkbe"]
-[ext_resource type="PackedScene" uid="uid://cqod3vfxoyfds" path="res://Scenes/dice_new.tscn" id="4_rqg8i"]
-[ext_resource type="Resource" uid="uid://dmsdn0xbu00w6" path="res://Resources/basic_dice.tres" id="5_rehlk"]
 
 [sub_resource type="Gradient" id="Gradient_hh0m8"]
 offsets = PackedFloat32Array(0.17931, 0.503448, 0.834483)
@@ -56,6 +54,3 @@ rotation = 1.5708
 scale = Vector2(0.25, 0.25)
 
 [node name="HUD" parent="." instance=ExtResource("3_8nkbe")]
-
-[node name="RigidBody2D" parent="." instance=ExtResource("4_rqg8i")]
-dice_template = ExtResource("5_rehlk")

@@ -16,7 +16,8 @@ var player_transfer_amount := 2
 
 func _ready():		
 	#TODO: This will come from the player
-	var player_dice = [basic, basic, basic, basic, basic, basic]		
+	#var player_dice = [basic, basic, basic, basic, basic, basic]
+	var player_dice = [basic]
 	load_player_dice(player_dice)
 	
 	#Populate decks with data
@@ -85,7 +86,7 @@ func load_player_dice(dice_type_array):
 			Global.DiceType.BASIC:				
 				var blank_dice = dice_scene.instantiate()			
 				print("Pre Template: ", blank_dice.dice_template)
-				blank_dice.dice_template = load(basic_dice_template_path)
+				blank_dice.dice_template = load(basic_dice_template_path)			
 				print("Post Template ", blank_dice.dice_template)
 				SignalManager.initialise_dice_values.emit(blank_dice)
 				#TODO: Add dice as child to offscreen "Waiting area" which will move to playable area when icon is selected

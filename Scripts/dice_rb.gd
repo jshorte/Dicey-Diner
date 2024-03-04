@@ -3,6 +3,8 @@ extends RigidBody2D
 const UNITS_TO_PIXELS : float = 3.2
 const PIXELS_TO_UNITS : float = 1/3.2
 
+var dice_status := Global.DiceState.DISABLED
+
 @export var dice_template : Resource = null
 @export var isActive : bool
 #@onready var dice_rb = $"."
@@ -40,9 +42,12 @@ var available_values := []
 
 func _init() -> void:
 	SignalManager.connect("initialise_dice_values", initialise_dice)
+	SignalManager.connect("update_dice_position", update_position)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
+	#isActive = true
+	
 	mouse_entered.connect(dice_mouse_entered)
 	mouse_exited.connect(dice_mouse_exited)
 	call_deferred("load_dice_deferred")
@@ -53,8 +58,11 @@ func _ready():
 	if isActive:
 		call_deferred("active_dice_deferred")
 
-	old_transform = dice_rb.transform.origin
+	#old_transform = dice_rb.transform.origin
 	rb_offset = dice_rb.transform.origin - transform.origin 
+	
+	roll_animation.set_sprite_frames(load(dice_template.dice_sprite_animation_path))
+	roll_animation.frame = available_values_index
 	
 	#dice_template = load("res://Resources/basic_dice.tres")
 	#print("Set Template ", dice_template)
@@ -62,30 +70,32 @@ func _ready():
 	#print("Path", dice_template.get_path())
 	#dice_template.resource_path = "res://Resources/basic_dice.tres"
 	
-	if(dice_template):
+	#if(dice_template):
+		#initialise_dice(self)
 		#Get values from Resource
-		min_value = dice_template.dice_min
-		max_value = dice_template.dice_max
-		interval = dice_template.dice_interval		
-		type = dice_template.dice_type
+		#min_value = dice_template.dice_min
+		#max_value = dice_template.dice_max
+		#interval = dice_template.dice_interval		
+		#type = dice_template.dice_type		
 		
 		#Add each available value from the min to max value in steps of interval
-		for n in range(min_value, max_value + 1, interval):
-			available_values.append(n)
+		#for n in range(min_value, max_value + 1, interval):
+		#	available_values.append(n)
 		
 		#Randomise initial number to use and display
-		available_values_index = randi() % available_values.size()
-		current_value = available_values[available_values_index]
+		#available_values_index = randi() % available_values.size()
+		#current_value = available_values[available_values_index]
 		
 		#Load animation & display initial frame
-		roll_animation_path = dice_template.dice_sprite_animation_path		
-		roll_animation.set_sprite_frames(load(roll_animation_path))
-		roll_animation.frame = available_values_index
+		#roll_animation_path = dice_template.dice_sprite_animation_path		
+		#roll_animation.set_sprite_frames(load(roll_animation_path))
+		#roll_animation.frame = available_values_index
+		
+	disable_dice(self)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):	
-	#print(get_global_mouse_position())
 	if !isActive:		
 		arrow.hide()
 		
@@ -147,8 +157,10 @@ func _process(delta):
 			timed_out = false		
 			display_arrow = true		
 			roll_animation.pause()			
-			#Update value to reflect that of the paused frame			
-			current_value = available_values[roll_animation.frame]
+			#Update value to reflect that of the paused frame
+			print("Available Values ", available_values)	
+			print("Frame ", roll_animation.frame)		
+			#current_value = available_values[roll_animation.frame]
 		
 		
 		if(calculate_power): 			
@@ -211,10 +223,49 @@ func bam_timeout(sprite) -> void:
 
 #Receieved when deckmanager has created this instance and assigned resource template
 func initialise_dice(dice):
-	if dice == self:
+	if dice == self:	
 		#template has been assigned, update our values
 		min_value = dice_template.dice_min
 		max_value = dice_template.dice_max
 		interval = dice_template.dice_interval
-		roll_animation_path = dice_template.dice_sprite_animation_path
 		type = dice_template.dice_type
+		
+		for n in range(min_value, max_value + 1, interval):
+			available_values.append(n)
+		
+		#Randomise initial number to use and display
+		available_values_index = randi() % available_values.size()
+		current_value = available_values[available_values_index]
+	
+#TODO Notes: Dice have three states
+#1: Dice in holding area offscreen 
+#2: Dice has been placed, ready to be used
+#3: Dice has been used and remains of the field
+#
+#For 1, we need to deactivate everything
+#For 2, we need to activate everything, make it the focus for aiming commands and display arrow
+#For 3, we need to keep the dice active, but remove focus and arrow
+
+func active_dice(dice):
+	if dice == self:
+		dice_status = Global.DiceState.ACTIVE
+		print("Activated")
+		arrow.show()
+
+func passive_dice(dice):
+	if dice == self:
+		dice_status = Global.DiceState.PASSIVE
+		print("Passive")
+		arrow.hide()
+		
+func disable_dice(dice):
+	if dice == self:
+		dice_status = Global.DiceState.DISABLED
+		print("Disabled")
+		arrow.hide()
+		
+func update_position(dice):
+	if(dice == self):
+		#TODO HACK: Have to print the global position otherwise it disappears??
+		print("Posi ", dice.global_position)
+		dice.global_position = get_global_mouse_position()

@@ -11,8 +11,12 @@ var power_label : Label = null
 var current_dice_mouse_entered
 var current_dice_offscreen = 0
 var dice_selected = false;
+#TODO DEBUG
+var first_active = true
 @onready var hud = $HUD
 @onready var dice_area = $"HUD/Bottom Bar/Dice Area"
+@onready var playable_area = $"HUD/Bottom Bar/Current Dice/VBoxContainer/HBoxContainer"
+@onready var holding_area = $"HUD/Holding Area/VBoxContainer"
 
 func _init() -> void:
 	SignalManager.connect("load_dice", load_dice)
@@ -56,16 +60,24 @@ func _process(delta: float) -> void:
 		#if (hovered_dice != active_dice):
 		print("Selected ", hovered_dice_ui, "with value", hovered_dice_ui.current_value)
 		#TODO: Update Panel when dice is selected
-		hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").remove_child(hovered_dice_ui)
+		#hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").remove_child(hovered_dice_ui)
 		dice_selected = true
 	#User has clicked while having a mouse selected, determine where the pointer is and either place or reset
 	elif(Input.is_action_just_pressed("ui_select") && dice_selected):
 		if not (dice_area.get_rect().has_point(get_local_mouse_position())):
 		#mouse_exited_upcoming(hovered_dice_ui, hovered_dice_sprite)
-			hovered_dice_ui.transform.origin = get_global_mouse_position()
+			#hovered_dice_ui.transform.origin = get_global_mouse_position()
+			hovered_dice_ui.position = Vector2(get_global_mouse_position())
 			hovered_dice_sprite.queue_free()
 			dice_selected = false
-		else:
+			
+			#TODO: DEBUG
+			if(first_active):
+				hovered_dice_ui.isActive = true
+				set_active_dice(hovered_dice_ui)
+				SignalManager.update_dice_position.emit(hovered_dice_ui)
+				first_active = false
+		else:			
 			var temp_array = [hovered_dice_ui]
 			hovered_dice_sprite.queue_free()
 			dice_selected = false
@@ -74,7 +86,7 @@ func _process(delta: float) -> void:
 	if(dice_selected):
 		dice_follow_mouse(hovered_dice_sprite)
 
-#Add each dice setup
+#Add each configured dice
 func load_dice(dice):
 	dice_array.append(dice)
 	dice_array.back().mouse_entered.connect(mouse_entered_main)
@@ -127,7 +139,7 @@ func mouse_exited_playable(dice, sprite):
 	#hovered_dice_sprite = null;
 
 func update_upcoming_panel(dice_array):
-	print("Upcoming Panel ",dice_array.size())
+	print("Upcoming Panel ", dice_array.size())
 	
 	for dice in dice_array:		
 		print("Dice Contents ",  dice)
@@ -171,6 +183,8 @@ func update_playable_panel(dice_array):
 		sprite.mouse_entered.connect(mouse_entered_playable.bind(dice, sprite))
 		sprite.mouse_exited.connect(mouse_exited_playable.bind(dice, sprite))
 		
+		print("Hud ", hud)
+		
 		#var sprite = Sprite2D.new()
 		#sprite.texture = load(item.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", 0).get_path())
 		#hud.get_node("Bottom Bar/Current Dice").add_child(item, false, Node.INTERNAL_MODE_BACK)
@@ -185,8 +199,8 @@ func update_playable_panel(dice_array):
 
 func move_dice_offscreen(dice_to_move):	
 	dice_to_move.position = Vector2(-100, current_dice_offscreen * 100)
+	dice_to_move.isActive = false
 	current_dice_offscreen += 1
-	print(dice_to_move.position)
 	pass
 	
 func dice_follow_mouse(sprite):
