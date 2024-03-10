@@ -1,12 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://5mykxs8mxcbl"]
+[gd_scene load_steps=11 format=3 uid="uid://5mykxs8mxcbl"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/main.gd" id="1_g0uib"]
 [ext_resource type="PackedScene" uid="uid://od82u7paivg4" path="res://Scenes/wall.tscn" id="2_ff80d"]
 [ext_resource type="PackedScene" uid="uid://c78g4wg5yy8ay" path="res://Scenes/hud.tscn" id="3_8nkbe"]
+[ext_resource type="Texture2D" uid="uid://du73vppeflnmf" path="res://Art/LongWall.png" id="4_s2qvn"]
+[ext_resource type="Texture2D" uid="uid://dp6v37ee6bvpm" path="res://Art/LongWallNoDoor.png" id="5_xu0us"]
+[ext_resource type="Texture2D" uid="uid://bgucgf1fmab6p" path="res://Art/Flooring.png" id="6_vh1co"]
 
 [sub_resource type="Gradient" id="Gradient_hh0m8"]
-offsets = PackedFloat32Array(0.17931, 0.503448, 0.834483)
-colors = PackedColorArray(0.489621, 0.489622, 0.489622, 1, 0.712129, 0.71213, 0.712129, 1, 0.490196, 0.490196, 0.490196, 1)
+offsets = PackedFloat32Array(0.531034)
+colors = PackedColorArray(0.758978, 0.861756, 0.999997, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_wkr1l"]
 gradient = SubResource("Gradient_hh0m8")
@@ -22,20 +25,26 @@ gradient = SubResource("Gradient_fc4t7")
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_g0uib")
+metadata/_edit_horizontal_guides_ = [553.0, 127.0, -413.0]
+metadata/_edit_vertical_guides_ = [1201.0, 86.0]
+
+[node name="Flooring" type="Sprite2D" parent="."]
+position = Vector2(646, 342)
+texture = ExtResource("6_vh1co")
 
 [node name="Background" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(639, 276.367)
 scale = Vector2(1.18333, 553.266)
 texture = SubResource("GradientTexture1D_wkr1l")
 
 [node name="Background2" type="Sprite2D" parent="."]
-visible = false
-position = Vector2(640.5, 652.5)
-scale = Vector2(5.00391, 137)
+position = Vector2(640.5, 638.5)
+scale = Vector2(5.00391, 165)
 texture = SubResource("GradientTexture1D_1ot4r")
 
 [node name="Wall" parent="." instance=ExtResource("2_ff80d")]
-position = Vector2(-2, -34)
+position = Vector2(-7, 95)
 scale = Vector2(0.25, 0.25)
 
 [node name="Wall2" parent="." instance=ExtResource("2_ff80d")]
@@ -52,5 +61,17 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(1315, -1)
 rotation = 1.5708
 scale = Vector2(0.25, 0.25)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(586, 64)
+texture = ExtResource("4_s2qvn")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(58, 64)
+texture = ExtResource("5_xu0us")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(1115, 64)
+texture = ExtResource("5_xu0us")
 
 [node name="HUD" parent="." instance=ExtResource("3_8nkbe")]

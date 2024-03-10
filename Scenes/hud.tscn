@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c78g4wg5yy8ay"]
+[gd_scene load_steps=6 format=3 uid="uid://c78g4wg5yy8ay"]
 
 [ext_resource type="Script" path="res://Tweens/InfoPanelTween.gd" id="1_gbq8n"]
 [ext_resource type="Script" path="res://Tweens/ActivePanelTween.gd" id="1_rl1s0"]
 [ext_resource type="Script" path="res://Tweens/ScorePanelTween.gd" id="2_rwv2h"]
 [ext_resource type="Script" path="res://Scripts/Bottom Bar.gd" id="2_u8ns1"]
+[ext_resource type="StyleBox" uid="uid://dmful4r8udbfr" path="res://Art/Blackboard.tres" id="3_ioopo"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -31,6 +32,7 @@ script = ExtResource("1_gbq8n")
 layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 100.0
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="Info_Show_Hide" type="Button" parent="Top Bar/Information Bar"]
 layout_mode = 1
@@ -39,45 +41,41 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -25.0
-offset_top = 17.0
-offset_right = -7.0
-offset_bottom = 67.0
+offset_left = -12.0
+offset_top = 7.0
+offset_right = -4.0
+offset_bottom = 31.0
 grow_horizontal = 2
 grow_vertical = 0
 rotation = -1.5708
 toggle_mode = true
-text = "<"
 icon_alignment = 1
 
-[node name="Info Text" type="Label" parent="Top Bar/Information Bar"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
+[node name="HBoxContainer" type="HBoxContainer" parent="Top Bar/Information Bar"]
+layout_mode = 2
+offset_top = 8.0
+offset_right = 1280.0
+offset_bottom = 96.0
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Top Bar/Information Bar/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Info Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
+layout_mode = 2
 text = "Goals"
 horizontal_alignment = 1
 
-[node name="Main Text" type="Label" parent="Top Bar/Information Bar"]
+[node name="Main Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
 modulate = Color(0.392157, 0.878431, 0, 1)
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 32.0
-offset_bottom = 56.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Main Objective: Score over 100"
 horizontal_alignment = 1
 
-[node name="Optional Text" type="Label" parent="Top Bar/Information Bar"]
+[node name="Optional Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
 modulate = Color(0.917647, 0.133333, 0, 1)
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 56.0
-offset_bottom = 80.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Optional: Do not lock dice"
 horizontal_alignment = 1
 
@@ -93,18 +91,17 @@ offset_top = 556.0
 offset_right = 1279.0
 offset_bottom = 720.0
 
-[node name="Current Dice" type="Panel" parent="Bottom Bar"]
+[node name="Current Dice" type="PanelContainer" parent="Bottom Bar"]
 layout_mode = 0
-offset_left = 696.0
-offset_top = 604.0
-offset_right = 1146.0
-offset_bottom = 704.0
+offset_left = 695.0
+offset_top = 570.0
+offset_right = 1145.0
+offset_bottom = 670.0
 mouse_filter = 2
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Current Dice"]
-layout_mode = 0
-offset_right = 449.0
-offset_bottom = 98.0
+layout_mode = 2
 
 [node name="Current Text" type="Label" parent="Bottom Bar/Current Dice/VBoxContainer"]
 layout_mode = 2
@@ -115,51 +112,44 @@ horizontal_alignment = 1
 layout_mode = 2
 alignment = 1
 
-[node name="Deck" type="Panel" parent="Bottom Bar"]
+[node name="Deck" type="PanelContainer" parent="Bottom Bar"]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 604.0
-offset_right = 116.0
-offset_bottom = 704.0
+offset_left = 15.0
+offset_top = 570.0
+offset_right = 115.0
+offset_bottom = 670.0
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="Deck Text" type="Label" parent="Bottom Bar/Deck"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Deck"
 horizontal_alignment = 1
 
-[node name="Discard" type="Panel" parent="Bottom Bar"]
+[node name="Discard" type="PanelContainer" parent="Bottom Bar"]
 layout_mode = 0
-offset_left = 1160.0
-offset_top = 604.0
-offset_right = 1260.0
-offset_bottom = 704.0
+offset_left = 1159.0
+offset_top = 570.0
+offset_right = 1259.0
+offset_bottom = 670.0
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="Discard Text" type="Label" parent="Bottom Bar/Discard"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Discard"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Upcoming Dice" type="Panel" parent="Bottom Bar"]
+[node name="Upcoming Dice" type="PanelContainer" parent="Bottom Bar"]
 layout_mode = 0
-offset_left = 136.0
-offset_top = 604.0
-offset_right = 586.0
-offset_bottom = 704.0
+offset_left = 135.0
+offset_top = 570.0
+offset_right = 585.0
+offset_bottom = 670.0
 mouse_filter = 1
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Upcoming Dice"]
-layout_mode = 0
-offset_right = 452.0
-offset_bottom = 98.0
+layout_mode = 2
 
 [node name="Next Text" type="Label" parent="Bottom Bar/Upcoming Dice/VBoxContainer"]
 layout_mode = 2
@@ -182,31 +172,27 @@ layout_mode = 0
 offset_top = 192.0
 offset_right = 200.0
 offset_bottom = 492.0
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="Current Text" type="Label" parent="Active Panel/Active"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
+layout_mode = 2
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 186.0
+offset_bottom = 39.0
 grow_horizontal = 2
 text = "Influence"
 horizontal_alignment = 1
 
 [node name="Active_Show_Hide" type="Button" parent="Active Panel/Active"]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -1.0
-offset_top = -25.0
-offset_right = 17.0
-offset_bottom = 25.0
+layout_mode = 2
+offset_left = 201.0
+offset_top = 136.0
+offset_right = 209.0
+offset_bottom = 160.0
 grow_horizontal = 0
 grow_vertical = 2
 toggle_mode = true
-text = ">"
 icon_alignment = 1
 
 [node name="Score Panel" type="Control" parent="."]
@@ -222,28 +208,22 @@ offset_left = 1080.0
 offset_top = 192.0
 offset_right = 1280.0
 offset_bottom = 492.0
+theme_override_styles/panel = ExtResource("3_ioopo")
 
 [node name="Current Text" type="Label" parent="Score Panel/Score"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
-grow_horizontal = 2
+layout_mode = 2
+offset_top = 16.0
+offset_right = 200.0
+offset_bottom = 39.0
 text = "Score"
 horizontal_alignment = 1
 
 [node name="Score_Show_Hide" type="Button" parent="Score Panel/Score"]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -17.0
-offset_top = -25.0
-offset_right = 1.0
-offset_bottom = 25.0
-grow_vertical = 2
+layout_mode = 2
+offset_left = -8.0
+offset_top = 136.0
+offset_bottom = 160.0
 toggle_mode = true
-text = "<"
 icon_alignment = 1
 
 [node name="Holding Area" type="Panel" parent="."]

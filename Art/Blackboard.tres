@@ -1,0 +1,12 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://dmful4r8udbfr"]
+
+[ext_resource type="Texture2D" uid="uid://bf3cx7db6d0jm" path="res://Art/Blackboard.png" id="1_ii1xp"]
+
+[resource]
+texture = ExtResource("1_ii1xp")
+texture_margin_left = 15.0
+texture_margin_top = 15.0
+texture_margin_right = 15.0
+texture_margin_bottom = 30.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0

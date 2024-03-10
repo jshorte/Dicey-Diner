@@ -16,8 +16,8 @@ var player_transfer_amount := 2
 
 func _ready():		
 	#TODO: This will come from the player
-	#var player_dice = [basic, basic, basic, basic, basic, basic]
-	var player_dice = [basic]
+	var player_dice = [basic, basic, basic, basic, basic, basic]
+	#var player_dice = [basic]
 	load_player_dice(player_dice)
 	
 	#Populate decks with data
