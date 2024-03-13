@@ -7,6 +7,6 @@ texture = ExtResource("1_ii1xp")
 texture_margin_left = 15.0
 texture_margin_top = 15.0
 texture_margin_right = 15.0
-texture_margin_bottom = 30.0
+texture_margin_bottom = 15.0
 expand_margin_top = 1.0
 expand_margin_right = 1.0

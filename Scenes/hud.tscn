@@ -1,16 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://c78g4wg5yy8ay"]
+[gd_scene load_steps=9 format=3 uid="uid://c78g4wg5yy8ay"]
 
 [ext_resource type="Script" path="res://Tweens/InfoPanelTween.gd" id="1_gbq8n"]
 [ext_resource type="Script" path="res://Tweens/ActivePanelTween.gd" id="1_rl1s0"]
+[ext_resource type="Theme" uid="uid://clny4maioyt6j" path="res://Fonts/font_theme.tres" id="1_rvbjj"]
 [ext_resource type="Script" path="res://Tweens/ScorePanelTween.gd" id="2_rwv2h"]
 [ext_resource type="Script" path="res://Scripts/Bottom Bar.gd" id="2_u8ns1"]
 [ext_resource type="StyleBox" uid="uid://dmful4r8udbfr" path="res://Art/Blackboard.tres" id="3_ioopo"]
+[ext_resource type="Script" path="res://Scripts/button_state.gd" id="4_owgk4"]
+[ext_resource type="FontFile" uid="uid://bkx5bbg0gevvk" path="res://Fonts/Bellfoods.otf" id="7_e1fvy"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+theme = ExtResource("1_rvbjj")
 
 [node name="Power Bar" type="Label" parent="."]
 layout_mode = 0
@@ -50,6 +54,7 @@ grow_vertical = 0
 rotation = -1.5708
 toggle_mode = true
 icon_alignment = 1
+script = ExtResource("4_owgk4")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Top Bar/Information Bar"]
 layout_mode = 2
@@ -194,6 +199,7 @@ grow_horizontal = 0
 grow_vertical = 2
 toggle_mode = true
 icon_alignment = 1
+script = ExtResource("4_owgk4")
 
 [node name="Score Panel" type="Control" parent="."]
 layout_mode = 3
@@ -208,23 +214,160 @@ offset_left = 1080.0
 offset_top = 192.0
 offset_right = 1280.0
 offset_bottom = 492.0
-theme_override_styles/panel = ExtResource("3_ioopo")
-
-[node name="Current Text" type="Label" parent="Score Panel/Score"]
-layout_mode = 2
-offset_top = 16.0
-offset_right = 200.0
-offset_bottom = 39.0
-text = "Score"
-horizontal_alignment = 1
 
 [node name="Score_Show_Hide" type="Button" parent="Score Panel/Score"]
 layout_mode = 2
 offset_left = -8.0
-offset_top = 136.0
-offset_bottom = 160.0
+offset_top = 120.0
+offset_bottom = 144.0
 toggle_mode = true
 icon_alignment = 1
+script = ExtResource("4_owgk4")
+
+[node name="Score Container" type="PanelContainer" parent="Score Panel/Score"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 300.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Score Panel/Score/Score Container"]
+layout_mode = 2
+
+[node name="Score Title Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_rvbjj")
+theme_override_fonts/font = ExtResource("7_e1fvy")
+text = "Score"
+horizontal_alignment = 1
+
+[node name="Score Space" type="Control" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_rvbjj")
+
+[node name="Score Body Food Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+theme = ExtResource("1_rvbjj")
+text = "Pizza
+"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme = ExtResource("1_rvbjj")
+text = "6"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Score Body Food Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+text = "Pepperoni
+"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "100"
+horizontal_alignment = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Score Body Food Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+text = "Pepperoni
+"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "100"
+horizontal_alignment = 1
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Score Body Food Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+text = "Pepperoni
+"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "100"
+horizontal_alignment = 1
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Score Body Food Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer6"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+text = "Pepperoni
+"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer6"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "100"
+horizontal_alignment = 1
+
+[node name="Total Space" type="Control" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer3" type="VBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Total Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+size_flags_stretch_ratio = 2.0
+text = "Total
+"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Total Score" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+text = "106
+"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="Holding Area" type="Panel" parent="."]
 layout_mode = 0

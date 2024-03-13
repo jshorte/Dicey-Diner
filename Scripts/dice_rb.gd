@@ -124,17 +124,16 @@ func _physics_process(delta: float) -> void:
 		var mouse_to_dice_position = get_global_mouse_position() - dice_centre_position
 		var distance_from_dice = (get_local_mouse_position() - dice_centre_position).length() - (dice_radius * UNITS_TO_PIXELS)	
 		
-		if update_arrow:			
-			arrow.global_position = current_point_on_circle * UNITS_TO_PIXELS
-			arrow.rotation = current_angle - dice_rb.rotation
-						
-		else:
-			arrow.hide()
+		#NOTE: update_arrow only true when dice is active (currently) so use Global.DiceState.ACTIVE as conditional
+		#if update_arrow:			
+		arrow.global_position = current_point_on_circle * UNITS_TO_PIXELS
+		arrow.rotation = current_angle - dice_rb.rotation						
 
 		if Input.is_action_just_pressed("ui_accept"):
 			move_active_dice(dice_centre_position, mouse_to_dice_position)
 			passive_dice(self)
 			SignalManager.unset_active_dice.emit(self)
+			SignalManager.close_all_panels.emit(true)
 			#is_active_dice.emit(self)
 
 	if  (dice_status == Global.DiceState.PASSIVE) && timed_out && abs(dice_rb.linear_velocity.x) < 10 && abs(dice_rb.linear_velocity.y) < 10:
@@ -161,7 +160,6 @@ func _physics_process(delta: float) -> void:
 		
 	if ((dice_status == Global.DiceState.PASSIVE) && is_moving):
 		roll_animation.play()
-
 
 func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> Vector2:
 	var point_x_on_circle : float = radius * cos(angle)
@@ -262,7 +260,7 @@ func disable_dice(dice):
 		
 func update_position(dice):
 	if(dice == self):
-		#TODO HACK: Have to print the global position otherwise it disappears??
+		#TODO HACK: Have to print the global position otherwise it goes to incorrect position
 		print("Posi ", dice.global_position)
 		dice.global_position = get_global_mouse_position()
 		

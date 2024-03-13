@@ -53,12 +53,14 @@ position = Vector2(-1, 552)
 scale = Vector2(0.25, 0.25)
 
 [node name="Wall3" parent="." instance=ExtResource("2_ff80d")]
-position = Vector2(0, -3)
+visible = false
+position = Vector2(86, -3)
 rotation = 1.5708
 scale = Vector2(0.25, 0.25)
 
 [node name="Wall4" parent="." instance=ExtResource("2_ff80d")]
-position = Vector2(1315, -1)
+visible = false
+position = Vector2(1234, -6)
 rotation = 1.5708
 scale = Vector2(0.25, 0.25)
 

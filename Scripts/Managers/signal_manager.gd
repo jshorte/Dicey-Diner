@@ -19,3 +19,5 @@ signal add_dice_to_playable
 signal initialise_dice_values
 signal move_dice_offscreen
 signal update_dice_position
+
+signal close_all_panels
