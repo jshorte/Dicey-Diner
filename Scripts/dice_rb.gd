@@ -21,8 +21,9 @@ var is_moving = false
 var timed_out = false
 var arrow_scene = preload("res://Scenes/arrow.tscn")
 var bam_scene = preload("res://Scenes/bam.tscn")
-var calculate_power = true;
-var display_arrow = true
+var calculate_power = true
+var display_arrow = false
+var update_arrow = false
 var update_origin = false
 var old_transform = null
 var rb_offset = null
@@ -43,6 +44,7 @@ var available_values := []
 func _init() -> void:
 	SignalManager.connect("initialise_dice_values", initialise_dice)
 	SignalManager.connect("update_dice_position", update_position)
+	SignalManager.connect("set_active_dice", active_dice)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -55,8 +57,8 @@ func _ready():
 	arrow = arrow_scene.instantiate()
 	add_child(arrow)
 	
-	if isActive:
-		call_deferred("active_dice_deferred")
+	#if isActive:
+	#	call_deferred("active_dice_deferred")
 
 	#old_transform = dice_rb.transform.origin
 	rb_offset = dice_rb.transform.origin - transform.origin 
@@ -96,8 +98,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
-	if !isActive:		
-		arrow.hide()
+	#if !isActive:		
+		#arrow.hide()
 		
 	if !get_colliding_bodies().is_empty():		
 		var new_bam = bam_scene.instantiate()
@@ -113,8 +115,8 @@ func _physics_process(delta: float) -> void:
 		timer.start()
 		timer.connect("timeout", bam_timeout.bind(new_bam))
 		
-	if isActive:
-		var display_arrow = true
+	if (isActive && (dice_status == Global.DiceState.ACTIVE)):
+		#var display_arrow = true
 		var current_angle = dice_rb.transform.origin.angle_to_point(get_global_mouse_position())
 		var dice_centre_position = dice_rb.transform.origin	
 		var current_point_on_circle = calculate_circle_point(dice_radius * PIXELS_TO_UNITS, current_angle, dice_centre_position)
@@ -122,49 +124,43 @@ func _physics_process(delta: float) -> void:
 		var mouse_to_dice_position = get_global_mouse_position() - dice_centre_position
 		var distance_from_dice = (get_local_mouse_position() - dice_centre_position).length() - (dice_radius * UNITS_TO_PIXELS)	
 		
-		if display_arrow:		
-			arrow.show()
+		if update_arrow:			
 			arrow.global_position = current_point_on_circle * UNITS_TO_PIXELS
 			arrow.rotation = current_angle - dice_rb.rotation
-			
-			#print("Mouse Pos ", get_global_mouse_position())
-			#print("Dice Centre", dice_centre_position)
-			#print("Angle ", current_angle)			
-			
-			#dice_line.clear_points()
-			#dice_line.add_point(current_point_on_circle_line)
-			#dice_line.add_point(current_point_on_circle_line + current_point_on_circle_line) 
-			#clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 0.5, 0, 3000)))
-			
-			#dice_line.add_point(dice_centre_position)
-			#dice_line.add_point(dice_centre_position + Vector2(100,100))
-			
-			#dice_line.add_point(current_point_on_circle * PIXELS_TO_UNITS * PIXELS_TO_UNITS)
-			#dice_line.add_point(current_point_on_circle * PIXELS_TO_UNITS)
-			
+						
 		else:
 			arrow.hide()
 
 		if Input.is_action_just_pressed("ui_accept"):
-			move_dice(dice_centre_position, mouse_to_dice_position)							
+			move_active_dice(dice_centre_position, mouse_to_dice_position)
+			passive_dice(self)
+			SignalManager.unset_active_dice.emit(self)
 			#is_active_dice.emit(self)
 
-		if timed_out && abs(dice_rb.linear_velocity.x) < 10 && abs(dice_rb.linear_velocity.y) < 10:
-			#TODO Lerp values for smoother finish
-			dice_rb.linear_velocity = Vector2.ZERO
-			#SignalManager.active_dice_stationary.emit("show")		
-			calculate_power = true
-			timed_out = false		
-			display_arrow = true		
-			roll_animation.pause()			
-			#Update value to reflect that of the paused frame
-			print("Available Values ", available_values)	
-			print("Frame ", roll_animation.frame)		
-			#current_value = available_values[roll_animation.frame]
+	if  (dice_status == Global.DiceState.PASSIVE) && timed_out && abs(dice_rb.linear_velocity.x) < 10 && abs(dice_rb.linear_velocity.y) < 10:
+		#TODO Lerp values for smoother finish
+		dice_rb.linear_velocity = Vector2.ZERO
+		is_moving = false
+		#SignalManager.active_dice_stationary.emit("show")		
+		calculate_power = true
+		timed_out = false		
+		#display_arrow = true		
+		roll_animation.pause()			
+		#Update value to reflect that of the paused frame
+		print("Available Values ", available_values)	
+		print("Frame ", roll_animation.frame)		
+		current_value = available_values[roll_animation.frame]		
 		
+	#If the dice has any velocity set its state to is_moving to start roll animation
+	if(abs(dice_rb.linear_velocity.x) > 1 || abs(dice_rb.linear_velocity.y) > 0):
+		is_moving = true
+	
+	if(calculate_power): 
+		var dice_centre_position = dice_rb.transform.origin				
+		SignalManager.power_value.emit(clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 10, 0, 3000))
 		
-		if(calculate_power): 			
-			SignalManager.power_value.emit(clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 10, 0, 3000))
+	if ((dice_status == Global.DiceState.PASSIVE) && is_moving):
+		roll_animation.play()
 
 
 func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> Vector2:
@@ -174,7 +170,7 @@ func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> 
 	return point_on_circle
 
 #TODO Factor in viewport size
-func move_dice(dice_centre_position, mouse_to_dice_position):	
+func move_active_dice(dice_centre_position, mouse_to_dice_position):	
 	#We're inside the dice shape
 	if(mouse_to_dice_position.length() < dice_radius):	
 		return
@@ -188,31 +184,27 @@ func move_dice(dice_centre_position, mouse_to_dice_position):
 	SignalManager.power_value.emit(impulse_strength)
 	display_arrow = false	
 	calculate_power = false		
-	timer.start(1)	
+	timer.start(0.1)	
 	#Make a bar which represents this clamped value
 	dice_rb.apply_central_impulse(-dir * impulse_strength)	
 	roll_animation.play()
-
+	is_moving = true
 
 #Grace period for velocity check
 func _on_timer_timeout() -> void:	
 	timed_out = true
 
-
 #Sent reference of dice to main to add to array
 func load_dice_deferred():
 	SignalManager.load_dice.emit(self)
 
-
 #Send reference of dice to set as active dice
-func active_dice_deferred():
-	SignalManager.set_active_dice.emit(self)
-
+#func active_dice_deferred():
+	#SignalManager.set_active_dice.emit(self)
 
 #Send reference of dice to set currently hovered dice
 func dice_mouse_entered():
 	SignalManager.mouse_enter.emit(self)
-
 
 #Remove hovered in main
 func dice_mouse_exited():
@@ -249,18 +241,22 @@ func initialise_dice(dice):
 func active_dice(dice):
 	if dice == self:
 		dice_status = Global.DiceState.ACTIVE
-		print("Activated")
+		update_arrow = true
 		arrow.show()
+		print("Activated")		
 
 func passive_dice(dice):
 	if dice == self:
 		dice_status = Global.DiceState.PASSIVE
+		update_arrow = false
 		print("Passive")
 		arrow.hide()
 		
 func disable_dice(dice):
 	if dice == self:
 		dice_status = Global.DiceState.DISABLED
+		update_arrow = false
+		dice_rb.sleeping = true
 		print("Disabled")
 		arrow.hide()
 		
@@ -269,3 +265,23 @@ func update_position(dice):
 		#TODO HACK: Have to print the global position otherwise it disappears??
 		print("Posi ", dice.global_position)
 		dice.global_position = get_global_mouse_position()
+		
+
+#######################################################
+###						CODE BANK					###
+#######################################################
+
+#print("Mouse Pos ", get_global_mouse_position())
+#print("Dice Centre", dice_centre_position)
+#print("Angle ", current_angle)			
+
+#dice_line.clear_points()
+#dice_line.add_point(current_point_on_circle_line)
+#dice_line.add_point(current_point_on_circle_line + current_point_on_circle_line) 
+#clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 0.5, 0, 3000)))
+
+#dice_line.add_point(dice_centre_position)
+#dice_line.add_point(dice_centre_position + Vector2(100,100))
+
+#dice_line.add_point(current_point_on_circle * PIXELS_TO_UNITS * PIXELS_TO_UNITS)
+#dice_line.add_point(current_point_on_circle * PIXELS_TO_UNITS)

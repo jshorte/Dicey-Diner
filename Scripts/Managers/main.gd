@@ -20,7 +20,8 @@ var first_active = true
 
 func _init() -> void:
 	SignalManager.connect("load_dice", load_dice)
-	SignalManager.connect("set_active_dice", set_active_dice)
+	#SignalManager.connect("set_active_dice", set_active_dice)
+	SignalManager.connect("unset_active_dice", unset_active_dice)
 	SignalManager.connect("power_value", set_power_label_text)
 	SignalManager.connect("active_dice_in_motion", update_sprites)
 	SignalManager.connect("active_dice_stationary", update_sprites)	
@@ -46,12 +47,13 @@ func _process(delta: float) -> void:
 	#elapsed_time += delta	
 	#print(get_global_mouse_position())
 	
-	if(Input.is_action_just_pressed("ui_accept") && hovered_dice != null):	
-		if (hovered_dice != active_dice):
-			active_dice.isActive = false
-			hovered_dice.get_node("Arrow").show
-			hovered_dice.isActive = true
-			set_active_dice(hovered_dice)
+	#TODO: Select active dice
+	#if(Input.is_action_just_pressed("ui_accept") && hovered_dice != null):	
+		#if (hovered_dice != active_dice):
+			#active_dice.isActive = false
+			#hovered_dice.get_node("Arrow").show
+			#hovered_dice.isActive = true
+			#set_active_dice(hovered_dice)
 			
 	#TODO: Set bool for select method
 	#is_action_pressed true for mousedown, false for mouse up (good for confirm on release)
@@ -71,12 +73,17 @@ func _process(delta: float) -> void:
 			hovered_dice_sprite.queue_free()
 			dice_selected = false
 			
+			hovered_dice_ui.isActive = true
+			set_active_dice(hovered_dice_ui)
+			SignalManager.update_dice_position.emit(hovered_dice_ui)
+			first_active = false			
+			
 			#TODO: DEBUG
-			if(first_active):
-				hovered_dice_ui.isActive = true
-				set_active_dice(hovered_dice_ui)
-				SignalManager.update_dice_position.emit(hovered_dice_ui)
-				first_active = false
+			#if(first_active):
+			#	hovered_dice_ui.isActive = true
+			#	set_active_dice(hovered_dice_ui)
+			#	SignalManager.update_dice_position.emit(hovered_dice_ui)
+			#	first_active = false
 		else:			
 			var temp_array = [hovered_dice_ui]
 			hovered_dice_sprite.queue_free()
@@ -96,6 +103,11 @@ func load_dice(dice):
 
 func set_active_dice(dice):
 	active_dice = dice
+	SignalManager.set_active_dice.emit(dice)
+	
+func unset_active_dice(dice):
+	active_dice = null
+
 
 func set_power_label_text(value):
 	power_label.text = str(value)

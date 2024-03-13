@@ -3,6 +3,7 @@ extends Node
 #emitted by dice.gd to transmit itself to main (for HUD)
 signal load_dice
 signal set_active_dice
+signal unset_active_dice
 signal power_value
 signal active_dice_in_motion
 signal active_dice_stationary
