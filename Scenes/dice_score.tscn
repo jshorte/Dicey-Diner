@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbperrkb7qurp"]
+
+[ext_resource type="Theme" uid="uid://clny4maioyt6j" path="res://Fonts/font_theme.tres" id="1_u6nm2"]
+
+[node name="dice_score" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_u6nm2")
+
+[node name="Score Body Food Text" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 2.0
+theme = ExtResource("1_u6nm2")
+text = "Pizza"
+horizontal_alignment = 1
+
+[node name="Score Body Score Text" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme = ExtResource("1_u6nm2")
+text = "6"
+horizontal_alignment = 1

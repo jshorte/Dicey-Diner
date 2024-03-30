@@ -21,3 +21,6 @@ signal move_dice_offscreen
 signal update_dice_position
 
 signal close_all_panels
+
+signal add_dice_to_score
+signal update_score

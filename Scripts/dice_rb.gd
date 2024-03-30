@@ -4,6 +4,7 @@ const UNITS_TO_PIXELS : float = 3.2
 const PIXELS_TO_UNITS : float = 1/3.2
 
 var dice_status := Global.DiceState.DISABLED
+var floating_text = preload("res://Scenes/floating_text.tscn")
 
 @export var dice_template : Resource = null
 @export var isActive : bool
@@ -33,6 +34,7 @@ var current_value = 0
 var available_values_index = 0;
 
 #Resource Defined
+var dice_name = ""
 var min_value = 0
 var max_value = 0
 var interval = 0
@@ -108,6 +110,12 @@ func _physics_process(delta: float) -> void:
 		collisions += 1
 		#print("Collisions ", collisions)
 		
+		var floating_text_instance = floating_text.instantiate()
+		floating_text_instance.value = collisions
+		add_child(floating_text_instance)
+		#TODO: Set position relative to size of currently applied sprite
+		#floating_text_instance.set_position
+	
 		var timer := Timer.new()
 		add_child(timer)
 		timer.wait_time = 0.2
@@ -146,9 +154,15 @@ func _physics_process(delta: float) -> void:
 		#display_arrow = true		
 		roll_animation.pause()			
 		#Update value to reflect that of the paused frame
-		print("Available Values ", available_values)	
-		print("Frame ", roll_animation.frame)		
-		current_value = available_values[roll_animation.frame]		
+		#print("Available Values ", available_values)	
+		#print("Frame ", roll_animation.frame)		
+		current_value = available_values[roll_animation.frame]	
+		
+		#TODO: Have phases (Selecting Phase / Active Phase / Scoring Phase)
+		#The reciver will look await scoring phase (probably updated here) and then calculate
+		#and update the score panel for each dice, comprised of its face value + bonus modifiers
+		SignalManager.update_score.emit(self)
+		
 		
 	#If the dice has any velocity set its state to is_moving to start roll animation
 	if(abs(dice_rb.linear_velocity.x) > 1 || abs(dice_rb.linear_velocity.y) > 0):
@@ -159,7 +173,7 @@ func _physics_process(delta: float) -> void:
 		SignalManager.power_value.emit(clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 10, 0, 3000))
 		
 	if ((dice_status == Global.DiceState.PASSIVE) && is_moving):
-		roll_animation.play()
+		roll_animation.play()		
 
 func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> Vector2:
 	var point_x_on_circle : float = radius * cos(angle)
@@ -215,6 +229,7 @@ func bam_timeout(sprite) -> void:
 func initialise_dice(dice):
 	if dice == self:	
 		#template has been assigned, update our values
+		dice_name = dice_template.dice_name
 		min_value = dice_template.dice_min
 		max_value = dice_template.dice_max
 		interval = dice_template.dice_interval

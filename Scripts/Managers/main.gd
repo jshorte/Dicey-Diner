@@ -76,6 +76,7 @@ func _process(delta: float) -> void:
 			hovered_dice_ui.isActive = true
 			set_active_dice(hovered_dice_ui)
 			SignalManager.update_dice_position.emit(hovered_dice_ui)
+			SignalManager.add_dice_to_score.emit(hovered_dice_ui)
 			first_active = false			
 			
 			#TODO: DEBUG
