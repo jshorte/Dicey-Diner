@@ -23,4 +23,11 @@ signal update_dice_position
 signal close_all_panels
 
 signal add_dice_to_score
-signal update_score
+signal update_dice_score
+signal update_total_score
+
+signal populate_playable_with_upcoming
+signal update_upcoming_sprites
+signal update_playable_sprites
+signal remove_from_playable_pile
+signal remove_from_upcoming_panel

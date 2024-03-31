@@ -14,6 +14,12 @@ var playable_pile := [] #Dice moved from upcoming ready to be selected and playe
 var player_draw_amount := 10
 var player_transfer_amount := 2
 
+func _init() -> void:
+	SignalManager.connect("populate_playable_with_upcoming", populate_playable_with_upcoming)
+	SignalManager.connect("update_upcoming_sprites", call_deferred_add_dice_to_upcoming)
+	SignalManager.connect("update_playable_sprites", call_deferred_add_dice_to_playable)
+	SignalManager.connect("remove_from_playable_pile", remove_from_playable_pile)
+
 func _ready():		
 	#TODO: This will come from the player
 	var player_dice = [basic, basic, basic, basic, basic, basic]
@@ -25,8 +31,11 @@ func _ready():
 	populate_playable_with_upcoming(player_transfer_amount)
 	
 	#Add visual representations to UI (Sprites)
-	call_deferred("call_deferred_add_dice_to_upcoming", upcoming_pile) 	
-	call_deferred("call_deferred_add_dice_to_playable", playable_pile)
+	#call_deferred("call_deferred_add_dice_to_upcoming") 	
+	#call_deferred("call_deferred_add_dice_to_playable")
+	
+	call_call_deferred_add_dice_to_upcoming()
+	call_call_deferred_add_dice_to_playable()
 
 
 func populate_upcoming(draw_amount):
@@ -50,15 +59,29 @@ func populate_upcoming(draw_amount):
 		else:
 			print("No cards left to draw! Draw Pile (", draw_pile.size(), ") Discard Pile ()", discard_pile.size(), ")")
 			break
-
+			
+func remove_from_playable_pile(dice):
+	print("Removing ", dice, "from playable pile")
+	print("Current pile: ", playable_pile)
+	
+	if(playable_pile.has(dice)):
+		print("Dice found, removing")
+		playable_pile.erase(dice)
+		print("Updated pile: ", playable_pile)	
 
 func populate_playable_with_upcoming(transfer_amount):
 	for i in transfer_amount:
 		if(upcoming_pile.size() > 0):
-			var card_to_add = upcoming_pile.pop_back()
+			var card_to_add = upcoming_pile.pop_back()	
+			
 			print("Transfering card (", card_to_add, ") To upcoming pile" )
 			playable_pile.append(card_to_add)
 			print("Playable pile: ", playable_pile)
+			print("Upcoming pile: ", upcoming_pile)
+			
+			#TODO: Card removed from upcoming, remove sprite
+			SignalManager.remove_from_upcoming_panel.emit(card_to_add)
+			
 		else:
 			print("No cards to transfer from upcoming to playable. Upcoming Pile", upcoming_pile.size(), "Playable Pile", playable_pile.size())
 			break
@@ -70,13 +93,19 @@ func populate_deck_with_discard():
 	draw_pile.append_array(discard_pile)
 	discard_pile = []
 
+func call_call_deferred_add_dice_to_upcoming():
+	call_deferred("call_deferred_add_dice_to_upcoming")
+	#SignalManager.add_dice_to_upcoming.emit(upcoming_pile)
 
-func call_deferred_add_dice_to_upcoming(pile):
-	SignalManager.add_dice_to_upcoming.emit(pile)
+func call_deferred_add_dice_to_upcoming():
+	SignalManager.add_dice_to_upcoming.emit(upcoming_pile)
 
+func call_call_deferred_add_dice_to_playable():
+	call_deferred("call_deferred_add_dice_to_playable")
+	#SignalManager.add_dice_to_upcoming.emit(upcoming_pile)
 
-func call_deferred_add_dice_to_playable(pile):
-	SignalManager.add_dice_to_playable.emit(pile)
+func call_deferred_add_dice_to_playable():
+	SignalManager.add_dice_to_playable.emit(playable_pile)
 
 
 #Base versions of each dice type TODO: Apply modifications to particular dice seperately

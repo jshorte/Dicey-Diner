@@ -9,3 +9,4 @@ dice_max = 6
 dice_interval = 1
 dice_sprite_animation_path = "res://Animations/basic_spriteframe.tres"
 dice_type = 0
+dice_name = "Pizza"

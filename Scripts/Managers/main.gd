@@ -2,6 +2,7 @@ extends Node2D
 
 var hud_scene = preload("res://Scenes/hud.tscn")
 var dice_array : Array = []
+var dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value)
 var active_dice = null
 var hovered_dice = null
 var hovered_dice_ui = null
@@ -16,6 +17,7 @@ var first_active = true
 @onready var hud = $HUD
 @onready var dice_area = $"HUD/Bottom Bar/Dice Area"
 @onready var playable_area = $"HUD/Bottom Bar/Current Dice/VBoxContainer/HBoxContainer"
+@onready var upcoming_area = $"HUD/Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer"
 @onready var holding_area = $"HUD/Holding Area/VBoxContainer"
 
 func _init() -> void:
@@ -30,6 +32,7 @@ func _init() -> void:
 	SignalManager.connect("add_dice_to_upcoming", update_upcoming_panel)	
 	SignalManager.connect("add_dice_to_playable", update_playable_panel)
 	SignalManager.connect("move_dice_offscreen", move_dice_offscreen)
+	SignalManager.connect("remove_from_upcoming_panel", remove_from_upcoming_panel)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
@@ -43,7 +46,12 @@ var update_timer = 1 # Set the update frequency here
 var elapsed_time = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(delta: float) -> void:	
+	if Input.is_action_just_pressed("ui_focus_next"):
+		print("Request")
+		SignalManager.populate_playable_with_upcoming.emit(2)
+		SignalManager.update_upcoming_sprites.emit()
+		SignalManager.update_playable_sprites.emit()
 	#elapsed_time += delta	
 	#print(get_global_mouse_position())
 	
@@ -77,6 +85,7 @@ func _process(delta: float) -> void:
 			set_active_dice(hovered_dice_ui)
 			SignalManager.update_dice_position.emit(hovered_dice_ui)
 			SignalManager.add_dice_to_score.emit(hovered_dice_ui)
+			SignalManager.remove_from_playable_pile.emit(hovered_dice_ui)
 			first_active = false			
 			
 			#TODO: DEBUG
@@ -108,7 +117,6 @@ func set_active_dice(dice):
 	
 func unset_active_dice(dice):
 	active_dice = null
-
 
 func set_power_label_text(value):
 	power_label.text = str(value)
@@ -151,18 +159,40 @@ func mouse_exited_playable(dice, sprite):
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
 
+#TODO: When transferring dice we need to remove the sprites they represent
+#IDEA: Dictionary of Dice : Sprites. If the given dice is found, remove the associated sprite
+func remove_from_upcoming_panel(dice):
+	for dict in dice_data:
+		if dict.has(dice):
+			dict[dice].queue_free()
+	
+	
 func update_upcoming_panel(dice_array):
 	print("Upcoming Panel ", dice_array.size())
 	
-	for dice in dice_array:		
-		print("Dice Contents ",  dice)
-		#var is_odd = dice_array.size() % 2		
-		#var sprite = Sprite2D.new()
-		var sprite = TextureRect.new()		
+	var current_dice_array := []
+	
+	for dict in dice_data:
+		current_dice_array.push_back(dict.keys()[0])
+	
+	#TODO: Currently adding dice regardless if they already exist
+	for dice in dice_array:			
+		#We only want to create textures which dont already exist. Return if we've already created one.
+		if(current_dice_array.has(dice)):
+			print("Key already exists: ", dice)
+			return
+			
+		var sprite = TextureRect.new()
+		var dice_data_dict
+		
 		sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
 		hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").add_child(sprite)
 		sprite.mouse_entered.connect(mouse_entered_upcoming.bind(dice, sprite))
 		sprite.mouse_exited.connect(mouse_exited_upcoming.bind(dice, sprite))
+		
+		dice_data_dict = {dice : sprite}
+		print("New pair created:", dice_data_dict)
+		dice_data.push_back(dice_data_dict)		
 		#hud.get_node("Bottom Bar/Upcoming Dice").add_icon_item(sprite, true)
 		
 		#TODO (Remove) Removed as positioning dealt with using V&H Boxes 
@@ -172,23 +202,17 @@ func update_upcoming_panel(dice_array):
 
 
 func update_playable_panel(dice_array):	
-	#TODO: Currently this reads an array of dice, takes its size and distributes dice evenly in the panel.
-	#What we'd like to take all current dice in the panel and add to it the passed dice, calculate size 
-	#using the combined size.	
-	#var panel_width = hud.get_node("Bottom Bar/Current Dice").size.x
-	#var panel_height = hud.get_node("Bottom Bar/Current Dice").size.y
-	#var panel_position = hud.get_node("Bottom Bar/Current Dice").position
+	#var current_dice_array := []
 	
-	#var vertical_margin = 40
-	#var number_of_entries = dice_array.size()
-	#var spacing = (panel_width / (number_of_entries + 1))
-	#var x = spacing	
-	#var y = (panel_height / 2) + 10
-	#var sprite = Sprite2D.new()
-	#sprite.texture = load("res://Dice/2.png")
-	#var sprite_width = sprite.get_rect().size.x	
-	
-	for dice in dice_array:		
+	#for dict in dice_data:
+	#	current_dice_array.push_back(dict.keys()[0])
+		
+	for dice in dice_array:
+		#We only want to create textures which dont already exist. Return if we've already created one.
+		#if(current_dice_array.has(dice)):
+		#	print("Key already exists: ", dice)
+		#	return
+		
 		#var is_odd = dice_array.size() % 2		
 		var sprite = TextureRect.new()
 		sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
@@ -196,18 +220,6 @@ func update_playable_panel(dice_array):
 		sprite.mouse_entered.connect(mouse_entered_playable.bind(dice, sprite))
 		sprite.mouse_exited.connect(mouse_exited_playable.bind(dice, sprite))
 		
-		print("Hud ", hud)
-		
-		#var sprite = Sprite2D.new()
-		#sprite.texture = load(item.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", 0).get_path())
-		#hud.get_node("Bottom Bar/Current Dice").add_child(item, false, Node.INTERNAL_MODE_BACK)
-		#hud.get_node("Bottom Bar/Current Dice").add_icon_item(sprite, true)
-		#print("ITEMLIST ", hud.get_node("Bottom Bar/Current Dice"))
-		#item.position = panel_position + Vector2(x, y)		
-		#TODO: Emit signal with reference to dice stating the dice is currently in playable area.
-		#Receiver will set the dice properties appropriately (only selectable, can "drag and drop" dice into the playable area)
-		#Releasing outside of this area will recall this function, placing back into the correct position
-		#x += spacing
 	print("Children ", hud.get_node("Bottom Bar/Current Dice").get_children())
 
 func move_dice_offscreen(dice_to_move):	
@@ -225,3 +237,46 @@ func mouse_enter_upcoming_panel():
 
 func mouse_exit_upcoming_panel():
 	print("Mouse Exited Panel")
+	
+#######################################################
+###						CODE BANK					###
+#######################################################
+
+#TODO: Playable dice spacing
+# Currently this reads an array of dice, takes its size and distributes dice evenly in the panel.
+#What we'd like to take all current dice in the panel and add to it the passed dice, calculate size 
+#using the combined size.	
+#var panel_width = hud.get_node("Bottom Bar/Current Dice").size.x
+#var panel_height = hud.get_node("Bottom Bar/Current Dice").size.y
+#var panel_position = hud.get_node("Bottom Bar/Current Dice").position
+
+#var vertical_margin = 40
+#var number_of_entries = dice_array.size()
+#var spacing = (panel_width / (number_of_entries + 1))
+#var x = spacing	
+#var y = (panel_height / 2) + 10
+#var sprite = Sprite2D.new()
+#sprite.texture = load("res://Dice/2.png")
+#var sprite_width = sprite.get_rect().size.x	
+
+#var sprite = Sprite2D.new()
+#sprite.texture = load(item.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", 0).get_path())
+#hud.get_node("Bottom Bar/Current Dice").add_child(item, false, Node.INTERNAL_MODE_BACK)
+#hud.get_node("Bottom Bar/Current Dice").add_icon_item(sprite, true)
+#print("ITEMLIST ", hud.get_node("Bottom Bar/Current Dice"))
+#item.position = panel_position + Vector2(x, y)		
+#TODO: Emit signal with reference to dice stating the dice is currently in playable area.
+#Receiver will set the dice properties appropriately (only selectable, can "drag and drop" dice into the playable area)
+#Releasing outside of this area will recall this function, placing back into the correct position
+#x += spacing
+
+#var sprite = Sprite2D.new()
+#sprite.texture = load(item.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", 0).get_path())
+#hud.get_node("Bottom Bar/Current Dice").add_child(item, false, Node.INTERNAL_MODE_BACK)
+#hud.get_node("Bottom Bar/Current Dice").add_icon_item(sprite, true)
+#print("ITEMLIST ", hud.get_node("Bottom Bar/Current Dice"))
+#item.position = panel_position + Vector2(x, y)		
+#TODO: Emit signal with reference to dice stating the dice is currently in playable area.
+#Receiver will set the dice properties appropriately (only selectable, can "drag and drop" dice into the playable area)
+#Releasing outside of this area will recall this function, placing back into the correct position
+#x += spacing

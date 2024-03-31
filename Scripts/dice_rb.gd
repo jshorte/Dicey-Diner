@@ -20,6 +20,7 @@ var floating_text = preload("res://Scenes/floating_text.tscn")
 
 var is_moving = false
 var timed_out = false
+var score_updated = false
 var arrow_scene = preload("res://Scenes/arrow.tscn")
 var bam_scene = preload("res://Scenes/bam.tscn")
 var calculate_power = true
@@ -31,6 +32,7 @@ var rb_offset = null
 var arrow = null
 var collisions = 0
 var current_value = 0
+var total_score = 0
 var available_values_index = 0;
 
 #Resource Defined
@@ -97,7 +99,6 @@ func _ready():
 		
 	disable_dice(self)
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	#if !isActive:		
@@ -138,13 +139,14 @@ func _physics_process(delta: float) -> void:
 		arrow.rotation = current_angle - dice_rb.rotation						
 
 		if Input.is_action_just_pressed("ui_accept"):
-			move_active_dice(dice_centre_position, mouse_to_dice_position)
+			move_active_dice(dice_centre_position, mouse_to_dice_position)			
 			passive_dice(self)
 			SignalManager.unset_active_dice.emit(self)
 			SignalManager.close_all_panels.emit(true)
-			#is_active_dice.emit(self)
+			score_updated = false
+			#is_active_dice.emit(self)		
 
-	if  (dice_status == Global.DiceState.PASSIVE) && timed_out && abs(dice_rb.linear_velocity.x) < 10 && abs(dice_rb.linear_velocity.y) < 10:
+	if  (timed_out && (dice_status == Global.DiceState.PASSIVE) && (abs(dice_rb.linear_velocity.x) < 10) && (abs(dice_rb.linear_velocity.y) < 10)):
 		#TODO Lerp values for smoother finish
 		dice_rb.linear_velocity = Vector2.ZERO
 		is_moving = false
@@ -156,12 +158,16 @@ func _physics_process(delta: float) -> void:
 		#Update value to reflect that of the paused frame
 		#print("Available Values ", available_values)	
 		#print("Frame ", roll_animation.frame)		
-		current_value = available_values[roll_animation.frame]	
+		current_value = available_values[roll_animation.frame]
+		total_score = current_value + collisions 
 		
 		#TODO: Have phases (Selecting Phase / Active Phase / Scoring Phase)
 		#The reciver will look await scoring phase (probably updated here) and then calculate
 		#and update the score panel for each dice, comprised of its face value + bonus modifiers
-		SignalManager.update_score.emit(self)
+		if(!score_updated):
+			SignalManager.update_dice_score.emit(self)	
+			score_updated = true
+		#SignalManager.update_total_score.emit()
 		
 		
 	#If the dice has any velocity set its state to is_moving to start roll animation
@@ -173,7 +179,8 @@ func _physics_process(delta: float) -> void:
 		SignalManager.power_value.emit(clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 10, 0, 3000))
 		
 	if ((dice_status == Global.DiceState.PASSIVE) && is_moving):
-		roll_animation.play()		
+		roll_animation.play()
+		score_updated = false		
 
 func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> Vector2:
 	var point_x_on_circle : float = radius * cos(angle)
