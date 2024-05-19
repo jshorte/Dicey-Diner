@@ -113,12 +113,9 @@ func load_player_dice(dice_type_array):
 	for type in dice_type_array:		
 		match type:
 			Global.DiceType.BASIC:				
-				var blank_dice = dice_scene.instantiate()			
-				print("Pre Template: ", blank_dice.dice_template)
-				blank_dice.dice_template = load(basic_dice_template_path)			
-				print("Post Template ", blank_dice.dice_template)
+				var blank_dice = dice_scene.instantiate()
+				blank_dice.dice_template = load(basic_dice_template_path)
 				SignalManager.initialise_dice_values.emit(blank_dice)
-				#TODO: Add dice as child to offscreen "Waiting area" which will move to playable area when icon is selected
 				get_tree().root.add_child.call_deferred(blank_dice)				
 				draw_pile.append(blank_dice)
 				SignalManager.move_dice_offscreen.emit(blank_dice)

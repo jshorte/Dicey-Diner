@@ -6,6 +6,8 @@ extends Control
 @onready var total_score_text = $"Score/Score Container/VBoxContainer/HBoxContainer3/Total Score"
 var total_score_value = 0
 var dice_score_scene = preload("res://Scenes/dice_score.tscn")
+var dice_label_default = preload("res://Art/default_label.tres")
+var dice_label_hovered = preload("res://Art/hovered_label.tres")
 var dice_array = []
 var i = 0
 
@@ -14,6 +16,8 @@ func _init() -> void:
 	SignalManager.connect("add_dice_to_score", add_new_dice)
 	SignalManager.connect("update_dice_score", update_dice_score)
 	SignalManager.connect("update_total_score", update_total_score)
+	SignalManager.connect("update_dice_score_label_to_default", update_dice_score_label_to_default)
+	SignalManager.connect("update_dice_score_label_to_hovered", update_dice_score_label_to_hovered)
 
 """
 func _on_score_show_hide_toggled(toggled_on: bool) -> void: 
@@ -45,15 +49,43 @@ func _on_score_show_hide_toggled(toggled_on: bool) -> void:
 func add_new_dice(dice):
 	print(dice)	
 	var dice_score = dice_score_scene.instantiate()
+		
+	#print("Dice Label: ", dice_label)
+	#print("Dice Label Colour: ", dice_label.font_color)
+	
 	dice_score.get_node("Score Body Food Text").text = dice.dice_name
 	dice_score.get_node("Score Body Score Text").text = str(dice.current_value)
+	
+	#print("Pre Label Colour: ", dice_score.get_node("Score Body Score Text").font_color)
+	dice_score.get_node("Score Body Food Text").set_label_settings(dice_label_default)
+	dice_score.get_node("Score Body Score Text").set_label_settings(dice_label_hovered)
+	print("Label Settings ", dice_score.get_node("Score Body Food Text").get_label_settings())
+	#print("Post Label Colour: ", dice_score.get_node("Score Body Score Text").font_color)
+	
+	
 	score_vbox.add_child(dice_score)	
 	
+	#Add the newly added dice to an array to be locally accessed
 	var dice_dict_key = dice
 	var dice_dict_value = dice_score
 	var dice_dict = {dice_dict_key : dice_dict_value}
 	dice_array.push_back(dice_dict)
 	print ("Size: ", dice_array.size())
+	print ("Font Colour: ", dice_score.get_node("Score Body Food Text"))
+
+#Highlight a dices score when the dices rigidbody is moused over 
+func update_dice_score_label_to_default(dice):
+	for dict in dice_array:
+		if dict.has(dice):
+			dict[dice].get_node("Score Body Food Text").set_label_settings(dice_label_default)
+			dict[dice].get_node("Score Body Score Text").set_label_settings(dice_label_default)
+
+#Set default label values when a dice is no longer mosued over 
+func update_dice_score_label_to_hovered(dice):		
+	for dict in dice_array:
+		if dict.has(dice):
+			dict[dice].get_node("Score Body Food Text").set_label_settings(dice_label_hovered)
+			dict[dice].get_node("Score Body Score Text").set_label_settings(dice_label_hovered)
 
 func update_dice_score(dice):
 	var total_score_value = 0

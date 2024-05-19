@@ -22,9 +22,12 @@ signal update_dice_position
 
 signal close_all_panels
 
+#Score Panel
 signal add_dice_to_score
 signal update_dice_score
 signal update_total_score
+signal update_dice_score_label_to_default
+signal update_dice_score_label_to_hovered
 
 signal populate_playable_with_upcoming
 signal update_upcoming_sprites

@@ -1,0 +1,294 @@
+[gd_scene load_steps=9 format=3 uid="uid://c78g4wg5yy8ay"]
+
+[ext_resource type="Script" path="res://Tweens/InfoPanelTween.gd" id="1_gbq8n"]
+[ext_resource type="Script" path="res://Tweens/ActivePanelTween.gd" id="1_rl1s0"]
+[ext_resource type="Theme" uid="uid://clny4maioyt6j" path="res://Fonts/font_theme.tres" id="1_rvbjj"]
+[ext_resource type="Script" path="res://Tweens/ScorePanelTween.gd" id="2_rwv2h"]
+[ext_resource type="Script" path="res://Scripts/Bottom Bar.gd" id="2_u8ns1"]
+[ext_resource type="StyleBox" uid="uid://dmful4r8udbfr" path="res://Art/Blackboard.tres" id="3_ioopo"]
+[ext_resource type="Script" path="res://Scripts/button_state.gd" id="4_owgk4"]
+[ext_resource type="FontFile" uid="uid://bkx5bbg0gevvk" path="res://Fonts/Bellfoods.otf" id="7_e1fvy"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme = ExtResource("1_rvbjj")
+
+[node name="Power Bar" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Top Bar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_gbq8n")
+
+[node name="Information Bar" type="Panel" parent="Top Bar"]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 100.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="Info_Show_Hide" type="Button" parent="Top Bar/Information Bar"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -12.0
+offset_top = 7.0
+offset_right = -4.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 0
+rotation = -1.5708
+toggle_mode = true
+icon_alignment = 1
+script = ExtResource("4_owgk4")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Top Bar/Information Bar"]
+layout_mode = 2
+offset_top = 8.0
+offset_right = 1280.0
+offset_bottom = 96.0
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Top Bar/Information Bar/HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Info Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Goals"
+horizontal_alignment = 1
+
+[node name="Main Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
+modulate = Color(0.392157, 0.878431, 0, 1)
+layout_mode = 2
+text = "Main Objective: Score over 100"
+horizontal_alignment = 1
+
+[node name="Optional Text" type="Label" parent="Top Bar/Information Bar/HBoxContainer/VBoxContainer"]
+modulate = Color(0.917647, 0.133333, 0, 1)
+layout_mode = 2
+text = "Optional: Do not lock dice"
+horizontal_alignment = 1
+
+[node name="Bottom Bar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_u8ns1")
+
+[node name="Dice Area" type="Panel" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 556.0
+offset_right = 1279.0
+offset_bottom = 720.0
+
+[node name="Current Dice" type="PanelContainer" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 695.0
+offset_top = 570.0
+offset_right = 1145.0
+offset_bottom = 670.0
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Current Dice"]
+layout_mode = 2
+
+[node name="Current Text" type="Label" parent="Bottom Bar/Current Dice/VBoxContainer"]
+layout_mode = 2
+text = "Current"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Bottom Bar/Current Dice/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Deck" type="PanelContainer" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 570.0
+offset_right = 115.0
+offset_bottom = 670.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="Deck Text" type="Label" parent="Bottom Bar/Deck"]
+layout_mode = 2
+text = "Deck"
+horizontal_alignment = 1
+
+[node name="Discard" type="PanelContainer" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 1159.0
+offset_top = 570.0
+offset_right = 1259.0
+offset_bottom = 670.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="Discard Text" type="Label" parent="Bottom Bar/Discard"]
+layout_mode = 2
+text = "Discard"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Upcoming Dice" type="PanelContainer" parent="Bottom Bar"]
+layout_mode = 0
+offset_left = 135.0
+offset_top = 570.0
+offset_right = 585.0
+offset_bottom = 670.0
+mouse_filter = 1
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Bottom Bar/Upcoming Dice"]
+layout_mode = 2
+
+[node name="Next Text" type="Label" parent="Bottom Bar/Upcoming Dice/VBoxContainer"]
+layout_mode = 2
+text = "Next"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Bottom Bar/Upcoming Dice/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Active Panel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_rl1s0")
+
+[node name="Active" type="Panel" parent="Active Panel"]
+layout_mode = 0
+offset_top = 192.0
+offset_right = 200.0
+offset_bottom = 492.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="Current Text" type="Label" parent="Active Panel/Active"]
+layout_mode = 2
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 186.0
+offset_bottom = 39.0
+grow_horizontal = 2
+text = "Influence"
+horizontal_alignment = 1
+
+[node name="Active_Show_Hide" type="Button" parent="Active Panel/Active"]
+layout_mode = 2
+offset_left = 201.0
+offset_top = 136.0
+offset_right = 209.0
+offset_bottom = 160.0
+grow_horizontal = 0
+grow_vertical = 2
+toggle_mode = true
+icon_alignment = 1
+script = ExtResource("4_owgk4")
+
+[node name="Score Panel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_rwv2h")
+
+[node name="Score" type="Panel" parent="Score Panel"]
+layout_mode = 0
+offset_left = 1080.0
+offset_top = 192.0
+offset_right = 1280.0
+offset_bottom = 492.0
+
+[node name="Score_Show_Hide" type="Button" parent="Score Panel/Score"]
+layout_mode = 2
+offset_left = -8.0
+offset_top = 120.0
+offset_bottom = 144.0
+toggle_mode = true
+icon_alignment = 1
+script = ExtResource("4_owgk4")
+
+[node name="Score Container" type="PanelContainer" parent="Score Panel/Score"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 300.0
+theme_override_styles/panel = ExtResource("3_ioopo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Score Panel/Score/Score Container"]
+layout_mode = 2
+
+[node name="Score Title Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_rvbjj")
+theme_override_fonts/font = ExtResource("7_e1fvy")
+text = "Score"
+horizontal_alignment = 1
+
+[node name="Score Space" type="Control" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="DiceVBox" type="VBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Total Space" type="Control" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer3" type="VBoxContainer" parent="Score Panel/Score/Score Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Total Text" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+size_flags_stretch_ratio = 2.0
+text = "Total
+"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Total Score" type="Label" parent="Score Panel/Score/Score Container/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+text = "106
+"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Holding Area" type="Panel" parent="."]
+layout_mode = 0
+offset_left = -81.0
+offset_top = 1.0
+offset_right = -41.0
+offset_bottom = 41.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Holding Area"]
+layout_mode = 0
+offset_left = -81.0
+offset_top = 1.0
+offset_right = -41.0
+offset_bottom = 41.0
+
+[connection signal="toggled" from="Top Bar/Information Bar/Info_Show_Hide" to="Top Bar" method="_on_info_show_hide_toggled"]
+[connection signal="pressed" from="Active Panel/Active/Active_Show_Hide" to="Active Panel" method="_on_active_show_hide_pressed"]
+[connection signal="toggled" from="Active Panel/Active/Active_Show_Hide" to="Active Panel" method="_on_active_show_hide_toggled"]
+[connection signal="toggled" from="Score Panel/Score/Score_Show_Hide" to="Score Panel" method="_on_score_show_hide_toggled"]

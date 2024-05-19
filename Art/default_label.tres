@@ -1,0 +1,7 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://cqmtkvnsumuh2"]
+
+[ext_resource type="FontFile" uid="uid://bkx5bbg0gevvk" path="res://Fonts/Bellfoods.otf" id="1_66m6y"]
+
+[resource]
+font = ExtResource("1_66m6y")
+font_size = 24

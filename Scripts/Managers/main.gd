@@ -131,12 +131,14 @@ func update_sprites(visibility):
 		active_dice.get_node("Arrow").hide()		
 		#print(current_dice)
 
-
+#Mouse starts mousing over a dice rigidbody
 func mouse_entered_main(dice):
 	hovered_dice = dice
-	print(hovered_dice)
-	
+	SignalManager.update_dice_score_label_to_hovered.emit(hovered_dice)
+
+#Mouse finishes mousing over a dice rigidbody
 func mouse_exited_main():
+	SignalManager.update_dice_score_label_to_default.emit(hovered_dice)
 	hovered_dice = null
 
 func mouse_entered_upcoming(dice, sprite):	
