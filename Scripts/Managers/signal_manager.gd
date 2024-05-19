@@ -34,3 +34,6 @@ signal update_upcoming_sprites
 signal update_playable_sprites
 signal remove_from_playable_pile
 signal remove_from_upcoming_panel
+
+signal set_gamestate
+signal update_dice_count

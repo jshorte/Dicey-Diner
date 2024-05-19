@@ -19,6 +19,7 @@ var floating_text = preload("res://Scenes/floating_text.tscn")
 @onready var roll_animation = $AnimatedSprite2D
 
 var is_moving = false
+var transmit_moving_signals = true
 var timed_out = false
 var score_updated = false
 var arrow_scene = preload("res://Scenes/arrow.tscn")
@@ -124,6 +125,7 @@ func _physics_process(delta: float) -> void:
 		timer.start()
 		timer.connect("timeout", bam_timeout.bind(new_bam))
 		
+	#Dice has been placed and ready to be fired
 	if (isActive && (dice_status == Global.DiceState.ACTIVE)):
 		#var display_arrow = true
 		var current_angle = dice_rb.transform.origin.angle_to_point(get_global_mouse_position())
@@ -143,9 +145,11 @@ func _physics_process(delta: float) -> void:
 			passive_dice(self)
 			SignalManager.unset_active_dice.emit(self)
 			SignalManager.close_all_panels.emit(true)
+			SignalManager.set_gamestate.emit(Global.GameState.PLAY)			
 			score_updated = false
 			#is_active_dice.emit(self)		
 
+	#Dice has come to a halt
 	if  (timed_out && (dice_status == Global.DiceState.PASSIVE) && (abs(dice_rb.linear_velocity.x) < 10) && (abs(dice_rb.linear_velocity.y) < 10)):
 		#TODO Lerp values for smoother finish
 		dice_rb.linear_velocity = Vector2.ZERO
@@ -154,7 +158,8 @@ func _physics_process(delta: float) -> void:
 		calculate_power = true
 		timed_out = false		
 		#display_arrow = true		
-		roll_animation.pause()			
+		roll_animation.pause()
+					
 		#Update value to reflect that of the paused frame
 		#print("Available Values ", available_values)	
 		#print("Frame ", roll_animation.frame)		
@@ -165,11 +170,13 @@ func _physics_process(delta: float) -> void:
 		#The reciver will look await scoring phase (probably updated here) and then calculate
 		#and update the score panel for each dice, comprised of its face value + bonus modifiers
 		if(!score_updated):
-			SignalManager.update_dice_score.emit(self)	
+			SignalManager.update_dice_count.emit(0, 1)
+			SignalManager.update_dice_score.emit(self)				
 			score_updated = true
-		#SignalManager.update_total_score.emit()
+		#SignalManager.update_total_score.emit()	
 		
-		
+		transmit_moving_signals = true
+
 	#If the dice has any velocity set its state to is_moving to start roll animation
 	if(abs(dice_rb.linear_velocity.x) > 1 || abs(dice_rb.linear_velocity.y) > 0):
 		is_moving = true
@@ -178,9 +185,12 @@ func _physics_process(delta: float) -> void:
 		var dice_centre_position = dice_rb.transform.origin				
 		SignalManager.power_value.emit(clampf((clampf((get_global_mouse_position() - dice_centre_position).length(), dice_radius, INF) - dice_radius) * 10, 0, 3000))
 		
-	if ((dice_status == Global.DiceState.PASSIVE) && is_moving):
+	#Dice is moving on the playing field
+	if (dice_status == Global.DiceState.PASSIVE && is_moving && transmit_moving_signals):
 		roll_animation.play()
-		score_updated = false		
+		SignalManager.update_dice_count.emit(1, 0)
+		score_updated = false
+		transmit_moving_signals = false		
 
 func calculate_circle_point(radius : float, angle : float, offset : Vector2) -> Vector2:
 	var point_x_on_circle : float = radius * cos(angle)
@@ -285,7 +295,6 @@ func update_position(dice):
 		#TODO HACK: Have to print the global position otherwise it goes to incorrect position
 		print("Posi ", dice.global_position)
 		dice.global_position = get_global_mouse_position()
-		
 
 #######################################################
 ###						CODE BANK					###

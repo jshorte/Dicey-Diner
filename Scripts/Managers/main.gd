@@ -2,6 +2,11 @@ extends Node2D
 
 var hud_scene = preload("res://Scenes/hud.tscn")
 var dice_array : Array = []
+#var active_dice_array : Array = []
+var actived_dice_count = 0
+var deactived_dice_count = 0
+var cards_in_playable = 2
+var score_phases = 0
 var dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value)
 var active_dice = null
 var hovered_dice = null
@@ -14,6 +19,7 @@ var current_dice_offscreen = 0
 var dice_selected = false;
 #TODO DEBUG
 var first_active = true
+var game_state = Global.GameState.SELECT
 @onready var hud = $HUD
 @onready var dice_area = $"HUD/Bottom Bar/Dice Area"
 @onready var playable_area = $"HUD/Bottom Bar/Current Dice/VBoxContainer/HBoxContainer"
@@ -33,6 +39,8 @@ func _init() -> void:
 	SignalManager.connect("add_dice_to_playable", update_playable_panel)
 	SignalManager.connect("move_dice_offscreen", move_dice_offscreen)
 	SignalManager.connect("remove_from_upcoming_panel", remove_from_upcoming_panel)
+	SignalManager.connect("set_gamestate", set_gamestate)
+	SignalManager.connect("update_dice_count", update_dice_count)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
@@ -47,9 +55,11 @@ var elapsed_time = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
+	print ("Active Dice ", actived_dice_count, "Deactive Dice ", deactived_dice_count)
+	
 	if Input.is_action_just_pressed("ui_focus_next"):
 		print("Request")
-		SignalManager.populate_playable_with_upcoming.emit(2)
+		SignalManager.populate_playable_with_upcoming.emit(cards_in_playable)
 		SignalManager.update_upcoming_sprites.emit()
 		SignalManager.update_playable_sprites.emit()
 	#elapsed_time += delta	
@@ -66,7 +76,12 @@ func _process(delta: float) -> void:
 	#TODO: Set bool for select method
 	#is_action_pressed true for mousedown, false for mouse up (good for confirm on release)
 	#is_action_just_pressed will set to true and not set back to false, (good for click to confirm)
-	if(Input.is_action_just_pressed("ui_select") && hovered_dice_ui != null && hovered_dice_sprite != null && !dice_selected):	
+	if(Input.is_action_just_pressed("ui_select") &&
+	 hovered_dice_ui != null &&
+	 hovered_dice_sprite != null &&
+	 !dice_selected && 
+	 active_dice == null &&
+	 game_state == Global.GameState.SELECT):
 		#if (hovered_dice != active_dice):
 		print("Selected ", hovered_dice_ui, "with value", hovered_dice_ui.current_value)
 		#TODO: Update Panel when dice is selected
@@ -87,6 +102,7 @@ func _process(delta: float) -> void:
 			SignalManager.add_dice_to_score.emit(hovered_dice_ui)
 			SignalManager.remove_from_playable_pile.emit(hovered_dice_ui)
 			first_active = false			
+			print("Dice Placed")
 			
 			#TODO: DEBUG
 			#if(first_active):
@@ -99,6 +115,7 @@ func _process(delta: float) -> void:
 			hovered_dice_sprite.queue_free()
 			dice_selected = false
 			update_playable_panel(temp_array)
+			print("Returned")
 	
 	if(dice_selected):
 		dice_follow_mouse(hovered_dice_sprite)
@@ -161,8 +178,6 @@ func mouse_exited_playable(dice, sprite):
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
 
-#TODO: When transferring dice we need to remove the sprites they represent
-#IDEA: Dictionary of Dice : Sprites. If the given dice is found, remove the associated sprite
 func remove_from_upcoming_panel(dice):
 	for dict in dice_data:
 		if dict.has(dice):
@@ -239,6 +254,23 @@ func mouse_enter_upcoming_panel():
 
 func mouse_exit_upcoming_panel():
 	print("Mouse Exited Panel")
+	
+func set_gamestate(state):
+	game_state = state
+	
+func update_dice_count(active, deactive):
+	actived_dice_count += active
+	deactived_dice_count += deactive
+	
+	if(actived_dice_count == deactived_dice_count):
+		#print(actived_dice_count, "active dice have now become", deactived_dice_count, "inactive dice.")
+		SignalManager.set_gamestate.emit(Global.GameState.SELECT)
+		score_phases += 1
+		if (cards_in_playable == score_phases):
+			score_phases = 0
+			SignalManager.populate_playable_with_upcoming.emit(cards_in_playable)
+			SignalManager.update_upcoming_sprites.emit()
+			SignalManager.update_playable_sprites.emit()
 	
 #######################################################
 ###						CODE BANK					###
