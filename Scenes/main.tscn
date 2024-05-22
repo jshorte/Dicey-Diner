@@ -44,7 +44,8 @@ scale = Vector2(5.00391, 165)
 texture = SubResource("GradientTexture1D_1ot4r")
 
 [node name="Wall" parent="." instance=ExtResource("2_ff80d")]
-position = Vector2(-7, 95)
+position = Vector2(1232, 128)
+rotation = 3.14159
 scale = Vector2(0.25, 0.25)
 
 [node name="Wall2" parent="." instance=ExtResource("2_ff80d")]
@@ -60,8 +61,8 @@ scale = Vector2(0.25, 0.25)
 
 [node name="Wall4" parent="." instance=ExtResource("2_ff80d")]
 visible = false
-position = Vector2(1234, -6)
-rotation = 1.5708
+position = Vector2(1200, 936)
+rotation = -1.57079
 scale = Vector2(0.25, 0.25)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

@@ -51,10 +51,11 @@ func add_new_dice(dice):
 	var dice_score = dice_score_scene.instantiate()
 		
 	#print("Dice Label: ", dice_label)
-	#print("Dice Label Colour: ", dice_label.font_color)
+	#print("Dice Label Colour: ", dice_label.font_color)	
 	
-	dice_score.get_node("Score Body Food Text").text = dice.dice_name
-	dice_score.get_node("Score Body Score Text").text = str(dice.current_value)
+	#Enable this to display dice on board entry
+	#dice_score.get_node("Score Body Food Text").text = dice.dice_name
+	#dice_score.get_node("Score Body Score Text").text = str(dice.current_value)
 	
 	#print("Pre Label Colour: ", dice_score.get_node("Score Body Score Text").font_color)
 	dice_score.get_node("Score Body Food Text").set_label_settings(dice_label_default)

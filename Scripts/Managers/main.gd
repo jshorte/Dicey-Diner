@@ -55,8 +55,6 @@ var elapsed_time = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:	
-	print ("Active Dice ", actived_dice_count, "Deactive Dice ", deactived_dice_count)
-	
 	if Input.is_action_just_pressed("ui_focus_next"):
 		print("Request")
 		SignalManager.populate_playable_with_upcoming.emit(cards_in_playable)

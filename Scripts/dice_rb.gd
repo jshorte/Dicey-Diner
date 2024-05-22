@@ -5,6 +5,7 @@ const PIXELS_TO_UNITS : float = 1/3.2
 
 var dice_status := Global.DiceState.DISABLED
 var floating_text = preload("res://Scenes/floating_text.tscn")
+#@onready var TEST_PROJECTILE = $CharacterBody2D
 
 @export var dice_template : Resource = null
 @export var isActive : bool
@@ -100,11 +101,75 @@ func _ready():
 		
 	disable_dice(self)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta: float) -> void:
-	#if !isActive:		
-		#arrow.hide()
+func _process(delta: float) -> void:	
+	queue_redraw()	
+	
+func _draw():	
+	if (isActive && (dice_status == Global.DiceState.ACTIVE)):
+		draw_path()
+		#draw_line(get_global_mouse_position() - dice_rb.transform.origin, current_point_on_circle  * UNITS_TO_PIXELS, Color.RED, 2)
+		#draw_line(Vector2(0,0), -get_local_mouse_position(), Color.RED, 10)
+		#print("Velocity = Impulse: ", impulse_strength, " / Mass: ", mass)
+	
+func draw_path():
+	var current_angle = dice_rb.transform.origin.angle_to_point(get_global_mouse_position())
+	var dice_centre_position = dice_rb.transform.origin	
+	var current_point_on_circle = calculate_circle_point(dice_radius * PIXELS_TO_UNITS, current_angle, dice_centre_position)
+	var current_point_on_circle_line = calculate_circle_point(-dice_radius, current_angle, Vector2.ZERO)
+	var mouse_to_dice_position = get_global_mouse_position() - dice_centre_position
+	var distance_from_dice = (get_local_mouse_position() - dice_centre_position).length() - (dice_radius * UNITS_TO_PIXELS)
+	var safe_mouse_position = clampf(mouse_to_dice_position.length(), dice_radius, INF)
+	var impulse_strength = clampf((safe_mouse_position - (dice_radius)) * 10, 0, 3000)
+	var dir = mouse_to_dice_position.normalized()	
+	
+	var velocity : Vector2 = (impulse_strength / mass) * -dir * 800
+	#var line_start = #Vector2(0,0)
+	var line_start = global_position
+	var line_end
+	var timestep = 0.05
+	var colours = [Color.RED, Color.BLUE]
+	
+	#TEST_PROJECTILE.global_position = line_start	
+	
+	for i in 70:
+		line_end = line_start + (velocity * timestep)
+		velocity = velocity * clampf(timestep, 0, 1)
 		
+		print("Step", velocity)		
+		
+		#var collision = TEST_PROJECTILE.move_and_collide(velocity * timestep)
+		#if collision:
+			#velocity = velocity.bounce(collision.get_normal())
+			#draw_line(to_local(line_start), to_local(TEST_PROJECTILE.global_position), Color.YELLOW)
+			#line_start = TEST_PROJECTILE.global_position
+			#continue
+		
+		#var ray := raycast_query2d(line_start, line_end)
+		
+		#if not ray.is_empty():
+		#	velocity = velocity.bounce(ray.normal)
+		#	draw_line(to_local(line_start), to_local(ray.position), Color.YELLOW)
+		#	line_start = ray.position
+		#	continue
+		
+		draw_line(to_local(line_start), to_local(line_end), colours[i%2])
+		line_start = line_end
+		
+func raycast_query2d(pointA, pointB) -> Dictionary:
+	var space_state = get_world_2d().direct_space_state
+	#print("Space state ", get_viewport_rect())
+	var query = PhysicsRayQueryParameters2D.create(pointA, pointB, 1)
+	var result = space_state.intersect_ray(query)
+	
+	if result:
+		return result
+		
+	return {}
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _physics_process(delta: float) -> void:	
+	#if !isActive:		
+		#arrow.hide()	
 	if !get_colliding_bodies().is_empty():		
 		var new_bam = bam_scene.instantiate()
 		get_parent().add_child(new_bam)
@@ -127,18 +192,18 @@ func _physics_process(delta: float) -> void:
 		
 	#Dice has been placed and ready to be fired
 	if (isActive && (dice_status == Global.DiceState.ACTIVE)):
-		#var display_arrow = true
+		var display_arrow = true
 		var current_angle = dice_rb.transform.origin.angle_to_point(get_global_mouse_position())
 		var dice_centre_position = dice_rb.transform.origin	
 		var current_point_on_circle = calculate_circle_point(dice_radius * PIXELS_TO_UNITS, current_angle, dice_centre_position)
 		var current_point_on_circle_line = calculate_circle_point(-dice_radius, current_angle, Vector2.ZERO)
 		var mouse_to_dice_position = get_global_mouse_position() - dice_centre_position
 		var distance_from_dice = (get_local_mouse_position() - dice_centre_position).length() - (dice_radius * UNITS_TO_PIXELS)	
-		
+		print("Position ", dice_rb.transform.origin)
 		#NOTE: update_arrow only true when dice is active (currently) so use Global.DiceState.ACTIVE as conditional
 		#if update_arrow:			
 		arrow.global_position = current_point_on_circle * UNITS_TO_PIXELS
-		arrow.rotation = current_angle - dice_rb.rotation						
+		arrow.rotation = current_angle - dice_rb.rotation	
 
 		if Input.is_action_just_pressed("ui_accept"):
 			move_active_dice(dice_centre_position, mouse_to_dice_position)			
@@ -215,7 +280,8 @@ func move_active_dice(dice_centre_position, mouse_to_dice_position):
 	calculate_power = false		
 	timer.start(0.1)	
 	#Make a bar which represents this clamped value
-	dice_rb.apply_central_impulse(-dir * impulse_strength)	
+	dice_rb.apply_central_impulse(-dir * impulse_strength)
+	print("Velocity = ", linear_velocity)
 	roll_animation.play()
 	is_moving = true
 

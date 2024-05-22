@@ -10,6 +10,8 @@ size = Vector2(5136.84, 128)
 [node name="Wall" type="StaticBody2D"]
 scale = Vector2(0.19, 0.19)
 disable_mode = 2
+collision_layer = 3
+collision_mask = 3
 physics_material_override = SubResource("PhysicsMaterial_3kibq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
