@@ -5,7 +5,7 @@ const PIXELS_TO_UNITS : float = 1/3.2
 
 var dice_status := Global.DiceState.DISABLED
 var floating_text = preload("res://Scenes/floating_text.tscn")
-#@onready var TEST_PROJECTILE = $CharacterBody2D
+@onready var TEST_PROJECTILE = $CharacterBody2D
 
 @export var dice_template : Resource = null
 @export var isActive : bool
@@ -129,7 +129,7 @@ func draw_path():
 	var timestep = 0.05
 	var colours = [Color.RED, Color.BLUE]
 	
-	#TEST_PROJECTILE.global_position = line_start	
+	TEST_PROJECTILE.global_position = line_start	
 	
 	for i in 70:
 		line_end = line_start + (velocity * timestep)
@@ -137,12 +137,12 @@ func draw_path():
 		
 		print("Step", velocity)		
 		
-		#var collision = TEST_PROJECTILE.move_and_collide(velocity * timestep)
-		#if collision:
-			#velocity = velocity.bounce(collision.get_normal())
-			#draw_line(to_local(line_start), to_local(TEST_PROJECTILE.global_position), Color.YELLOW)
-			#line_start = TEST_PROJECTILE.global_position
-			#continue
+		var collision = TEST_PROJECTILE.move_and_collide(velocity * timestep)
+		if collision:
+			velocity = velocity.bounce(collision.get_normal())
+			draw_line(to_local(line_start), to_local(TEST_PROJECTILE.global_position), Color.YELLOW)
+			line_start = TEST_PROJECTILE.global_position
+			continue
 		
 		#var ray := raycast_query2d(line_start, line_end)
 		
@@ -212,6 +212,7 @@ func _physics_process(delta: float) -> void:
 			SignalManager.close_all_panels.emit(true)
 			SignalManager.set_gamestate.emit(Global.GameState.PLAY)			
 			score_updated = false
+			TEST_PROJECTILE.queue_free()
 			#is_active_dice.emit(self)		
 
 	#Dice has come to a halt
