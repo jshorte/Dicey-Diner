@@ -122,35 +122,33 @@ func draw_path():
 	var impulse_strength = clampf((safe_mouse_position - (dice_radius)) * 10, 0, 3000)
 	var dir = mouse_to_dice_position.normalized()	
 	
-	var velocity : Vector2 = (impulse_strength / mass) * -dir * 800
+	var velocity : Vector2 = (impulse_strength / mass) * -dir * 100
 	#var line_start = #Vector2(0,0)
 	var line_start = global_position
 	var line_end
 	var timestep = 0.05
 	var colours = [Color.RED, Color.BLUE]
 	
-	TEST_PROJECTILE.global_position = line_start	
+	#TEST_PROJECTILE.global_position = line_start	
 	
 	for i in 70:
 		line_end = line_start + (velocity * timestep)
-		velocity = velocity * clampf(timestep, 0, 1)
+		velocity = velocity * clampf(timestep, 0, 1)		
 		
-		print("Step", velocity)		
-		
-		var collision = TEST_PROJECTILE.move_and_collide(velocity * timestep)
-		if collision:
-			velocity = velocity.bounce(collision.get_normal())
-			draw_line(to_local(line_start), to_local(TEST_PROJECTILE.global_position), Color.YELLOW)
-			line_start = TEST_PROJECTILE.global_position
-			continue
-		
-		#var ray := raycast_query2d(line_start, line_end)
-		
-		#if not ray.is_empty():
-		#	velocity = velocity.bounce(ray.normal)
-		#	draw_line(to_local(line_start), to_local(ray.position), Color.YELLOW)
-		#	line_start = ray.position
+		#var collision = TEST_PROJECTILE.move_and_collide(velocity * timestep)
+		#if collision:
+		#	velocity = velocity.bounce(collision.get_normal())
+		#	draw_line(to_local(line_start), to_local(TEST_PROJECTILE.global_position), Color.YELLOW)
+		#	line_start = TEST_PROJECTILE.global_position
 		#	continue
+		
+		var ray := raycast_query2d(line_start, line_end)
+		
+		if not ray.is_empty():
+			velocity = velocity.bounce(ray.normal)
+			draw_line(to_local(line_start), to_local(ray.position), Color.YELLOW)
+			line_start = ray.position
+			continue
 		
 		draw_line(to_local(line_start), to_local(line_end), colours[i%2])
 		line_start = line_end

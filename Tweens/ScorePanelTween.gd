@@ -81,7 +81,7 @@ func update_dice_score_label_to_default(dice):
 			dict[dice].get_node("Score Body Food Text").set_label_settings(dice_label_default)
 			dict[dice].get_node("Score Body Score Text").set_label_settings(dice_label_default)
 
-#Set default label values when a dice is no longer mosued over 
+#Set default label values when a dice is no longer moused over 
 func update_dice_score_label_to_hovered(dice):		
 	for dict in dice_array:
 		if dict.has(dice):

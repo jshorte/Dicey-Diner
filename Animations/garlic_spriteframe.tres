@@ -1,0 +1,25 @@
+[gd_resource type="SpriteFrames" load_steps=4 format=3 uid="uid://c7sq8auhlshsk"]
+
+[ext_resource type="Texture2D" uid="uid://cuqife08d85sf" path="res://Art/Garlic/Garlic1-Sheet.aseprite" id="1_kyt5p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oo1u8"]
+atlas = ExtResource("1_kyt5p")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xjyo5"]
+atlas = ExtResource("1_kyt5p")
+region = Rect2(0, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oo1u8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xjyo5")
+}],
+"loop": true,
+"name": &"All",
+"speed": 6.0
+}]

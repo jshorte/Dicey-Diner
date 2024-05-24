@@ -1,8 +1,10 @@
 extends Node
 
 var basic = Global.DiceType.BASIC
+var garlic = Global.DiceType.GARLIC
 var dice_scene = preload("res://Scenes/dice_new.tscn") #Dice framework
 var basic_dice_template_path = "res://Resources/basic_dice.tres" #Dice definition
+var garlic_dice_template_path = "res://Resources/garlic_dice.tres" #Dice definition
 
 #Various dice states
 var draw_pile := [] #Dice in deck 
@@ -22,7 +24,7 @@ func _init() -> void:
 
 func _ready():		
 	#TODO: This will come from the player
-	var player_dice = [basic, basic, basic, basic, basic, basic]
+	var player_dice = [garlic, garlic, garlic, basic, basic, basic]
 	#var player_dice = [basic]
 	load_player_dice(player_dice)
 	
@@ -115,6 +117,13 @@ func load_player_dice(dice_type_array):
 			Global.DiceType.BASIC:				
 				var blank_dice = dice_scene.instantiate()
 				blank_dice.dice_template = load(basic_dice_template_path)
+				SignalManager.initialise_dice_values.emit(blank_dice)
+				get_tree().root.add_child.call_deferred(blank_dice)				
+				draw_pile.append(blank_dice)
+				SignalManager.move_dice_offscreen.emit(blank_dice)
+			Global.DiceType.GARLIC: 
+				var blank_dice = dice_scene.instantiate()
+				blank_dice.dice_template = load(garlic_dice_template_path)
 				SignalManager.initialise_dice_values.emit(blank_dice)
 				get_tree().root.add_child.call_deferred(blank_dice)				
 				draw_pile.append(blank_dice)
