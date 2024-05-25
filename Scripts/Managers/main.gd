@@ -1,6 +1,7 @@
 extends Node2D
 
 var hud_scene = preload("res://Scenes/hud.tscn")
+var dice_options_scene = preload ("res://Scenes/dice_options.tscn")
 var dice_array : Array = []
 #var active_dice_array : Array = []
 var actived_dice_count = 0
@@ -8,6 +9,7 @@ var deactived_dice_count = 0
 var cards_in_playable = 2
 var score_phases = 0
 var dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value)
+var current_dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value) in current panel
 var active_dice = null
 var hovered_dice = null
 var hovered_dice_ui = null
@@ -41,6 +43,7 @@ func _init() -> void:
 	SignalManager.connect("remove_from_upcoming_panel", remove_from_upcoming_panel)
 	SignalManager.connect("set_gamestate", set_gamestate)
 	SignalManager.connect("update_dice_count", update_dice_count)
+	SignalManager.connect("update_dice_sprite", update_dice_sprite)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
@@ -48,7 +51,7 @@ func _ready() -> void:
 	#add_child(hud)
 	power_label = hud.get_node("Power Bar")
 	dice_area.mouse_entered.connect(mouse_enter_upcoming_panel)
-	dice_area.mouse_exited.connect(mouse_exit_upcoming_panel)
+	dice_area.mouse_exited.connect(mouse_exit_upcoming_panel)	
 	
 var update_timer = 1 # Set the update frequency here
 var elapsed_time = 0
@@ -207,7 +210,7 @@ func update_upcoming_panel(dice_array):
 		
 		dice_data_dict = {dice : sprite}
 		print("New pair created:", dice_data_dict)
-		dice_data.push_back(dice_data_dict)		
+		dice_data.push_back(dice_data_dict)
 		#hud.get_node("Bottom Bar/Upcoming Dice").add_icon_item(sprite, true)
 		
 		#TODO (Remove) Removed as positioning dealt with using V&H Boxes 
@@ -230,12 +233,33 @@ func update_playable_panel(dice_array):
 		
 		#var is_odd = dice_array.size() % 2		
 		var sprite = TextureRect.new()
+		var dice_options = dice_options_scene.instantiate()
+		var current_dice_data_dict
+		
 		sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
 		hud.get_node("Bottom Bar/Current Dice/VBoxContainer/HBoxContainer").add_child(sprite)
 		sprite.mouse_entered.connect(mouse_entered_playable.bind(dice, sprite))
 		sprite.mouse_exited.connect(mouse_exited_playable.bind(dice, sprite))
 		
+		current_dice_data_dict = {dice : sprite}
+		current_dice_data.push_back(current_dice_data_dict)
+		
+		sprite.add_child(dice_options)
+		
+		dice_options.get_node("draw_option").connect("pressed", dice.draw_pressed.bind())
+		dice_options.get_node("roll_option").connect("pressed", dice.roll_pressed.bind())
+		dice_options.get_node("lock_option").connect("pressed", dice.lock_pressed.bind())
+		
+		
+		
+		
 	print("Children ", hud.get_node("Bottom Bar/Current Dice").get_children())
+	
+func update_dice_sprite(dice):
+	#TODO: Compare dice to dictionary tying rigidbodies to sprites and update the linked sprite
+	for dict in current_dice_data:
+		if dict.has(dice):
+			dict[dice].texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
 
 func move_dice_offscreen(dice_to_move):	
 	dice_to_move.position = Vector2(-100, current_dice_offscreen * 100)

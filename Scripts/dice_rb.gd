@@ -19,6 +19,7 @@ var floating_text = preload("res://Scenes/floating_text.tscn")
 @onready var dice_radius = dice_collision_shape.shape.radius
 @onready var roll_animation = $AnimatedSprite2D
 
+var affected_by_garlic = false
 var is_moving = false
 var transmit_moving_signals = true
 var timed_out = false
@@ -164,16 +165,32 @@ func raycast_query2d(pointA, pointB) -> Dictionary:
 		
 	return {}
 
+func _on_body_entered(body:Node):
+	total_score = available_values[roll_animation.frame]
+	
+	if body is RigidBody2D: #Collided with a dice		
+		if body.dice_template.dice_type == Global.DiceType.BASIC: #Pizza dice
+			print("Pizza entered")
+		elif body.dice_template.dice_type == Global.DiceType.GARLIC: #Garlic dice
+			print("Garlic entered")
+			if !affected_by_garlic:
+				print("Not affected by garlic - calculate score")
+				print("Current Score: ", total_score, " Garlic Value: ", body.available_values[body.roll_animation.frame], " Total Score: ", total_score * body.available_values[body.roll_animation.frame])
+				total_score *= body.available_values[body.roll_animation.frame]
+				affected_by_garlic = true
+				
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:	
 	#if !isActive:		
 		#arrow.hide()	
+	#Generic collision
 	if !get_colliding_bodies().is_empty():		
 		var new_bam = bam_scene.instantiate()
 		get_parent().add_child(new_bam)
 		new_bam.global_position = dice_rb.transform.origin		
 		collisions += 1
-		#print("Collisions ", collisions)
+		print("Collisions ", get_colliding_bodies())		
 		
 		var floating_text_instance = floating_text.instantiate()
 		floating_text_instance.value = collisions
@@ -210,7 +227,7 @@ func _physics_process(delta: float) -> void:
 			SignalManager.close_all_panels.emit(true)
 			SignalManager.set_gamestate.emit(Global.GameState.PLAY)			
 			score_updated = false
-			TEST_PROJECTILE.queue_free()
+			#TEST_PROJECTILE.queue_free()
 			#is_active_dice.emit(self)		
 
 	#Dice has come to a halt
@@ -360,6 +377,20 @@ func update_position(dice):
 		#TODO HACK: Have to print the global position otherwise it goes to incorrect position
 		print("Posi ", dice.global_position)
 		dice.global_position = get_global_mouse_position()
+
+func draw_pressed():
+	print("Pressed Draw")
+	
+func roll_pressed():
+	print("Pressed Roll")
+	available_values_index = randi() % available_values.size()
+	roll_animation.frame = available_values_index
+	current_value = available_values[available_values_index]
+	#current_value = available_values[roll_animation.frame]
+	SignalManager.update_dice_sprite.emit(self)
+	
+func lock_pressed():
+	print("Pressed Lock")
 
 #######################################################
 ###						CODE BANK					###
