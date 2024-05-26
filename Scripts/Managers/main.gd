@@ -10,6 +10,7 @@ var cards_in_playable = 2
 var score_phases = 0
 var dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value)
 var current_dice_data := [] #Array of dictionaries tying Rigidbody (Key) to Sprite (Value) in current panel
+var current_sprite_data : TextureRect
 var active_dice = null
 var hovered_dice = null
 var hovered_dice_ui = null
@@ -21,6 +22,7 @@ var current_dice_offscreen = 0
 var dice_selected = false;
 #TODO DEBUG
 var first_active = true
+var dice_options_displayed = false
 var game_state = Global.GameState.SELECT
 @onready var hud = $HUD
 @onready var dice_area = $"HUD/Bottom Bar/Dice Area"
@@ -77,6 +79,12 @@ func _process(delta: float) -> void:
 	#TODO: Set bool for select method
 	#is_action_pressed true for mousedown, false for mouse up (good for confirm on release)
 	#is_action_just_pressed will set to true and not set back to false, (good for click to confirm)
+	if (Input.is_action_just_pressed("ui_select") &&
+	 current_sprite_data != null &&
+	 !dice_options_displayed):
+		current_sprite_data.get_node("dice_options_root").set_visible(false)
+		
+	
 	if(Input.is_action_just_pressed("ui_select") &&
 	 hovered_dice_ui != null &&
 	 hovered_dice_sprite != null &&
@@ -88,21 +96,24 @@ func _process(delta: float) -> void:
 		#TODO: Update Panel when dice is selected
 		#hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").remove_child(hovered_dice_ui)
 		dice_selected = true
+		current_sprite_data.get_node("dice_options_root").set_visible(false)
 	#User has clicked while having a mouse selected, determine where the pointer is and either place or reset
 	elif(Input.is_action_just_pressed("ui_select") && dice_selected):
 		if not (dice_area.get_rect().has_point(get_local_mouse_position())):
 		#mouse_exited_upcoming(hovered_dice_ui, hovered_dice_sprite)
 			#hovered_dice_ui.transform.origin = get_global_mouse_position()
 			hovered_dice_ui.position = Vector2(get_global_mouse_position())
+			#TODO: Remove entry from dictionary
 			hovered_dice_sprite.queue_free()
 			dice_selected = false
+			print("Current Dice Array ", current_dice_data)
 			
 			hovered_dice_ui.isActive = true
 			set_active_dice(hovered_dice_ui)
 			SignalManager.update_dice_position.emit(hovered_dice_ui)
 			SignalManager.add_dice_to_score.emit(hovered_dice_ui)
 			SignalManager.remove_from_playable_pile.emit(hovered_dice_ui)
-			first_active = false			
+			first_active = false
 			print("Dice Placed")
 			
 			#TODO: DEBUG
@@ -113,7 +124,9 @@ func _process(delta: float) -> void:
 			#	first_active = false
 		else:			
 			var temp_array = [hovered_dice_ui]
-			hovered_dice_sprite.queue_free()
+			#hovered_dice_sprite.queue_free()
+			#TODO: Remove hidden sprites (queue_free currently crashes when assigning new texture)
+			hovered_dice_sprite.set_visible(false)
 			dice_selected = false
 			update_playable_panel(temp_array)
 			print("Returned")
@@ -174,8 +187,19 @@ func mouse_entered_playable(dice, sprite):
 	hovered_dice_ui = dice;	
 	hovered_dice_sprite = sprite;
 	
+	#Show menu if one isn't currently being displayed or is different from the current one being displayed
+	if(current_sprite_data == null || current_sprite_data == hovered_dice_sprite):
+		hovered_dice_sprite.get_node("dice_options_root").set_visible(true)
+		current_sprite_data = hovered_dice_sprite
+	#Hovering over a new dice, remove previous menu and display new
+	else: 
+		current_sprite_data.get_node("dice_options_root").set_visible(false)
+		hovered_dice_sprite.get_node("dice_options_root").set_visible(true)
+		current_sprite_data = hovered_dice_sprite
+	
 func mouse_exited_playable(dice, sprite):	
 	print("Mouse no longer over ", hovered_dice_ui, "with value ", hovered_dice_ui.current_value)
+	#hovered_dice_sprite.get_node("dice_options_root").set_visible(false)
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
 
@@ -244,14 +268,17 @@ func update_playable_panel(dice_array):
 		current_dice_data_dict = {dice : sprite}
 		current_dice_data.push_back(current_dice_data_dict)
 		
-		sprite.add_child(dice_options)
-		
+		sprite.add_child(dice_options)		
 		dice_options.get_node("draw_option").connect("pressed", dice.draw_pressed.bind())
 		dice_options.get_node("roll_option").connect("pressed", dice.roll_pressed.bind())
 		dice_options.get_node("lock_option").connect("pressed", dice.lock_pressed.bind())
-		
-		
-		
+		dice_options.get_node("draw_option").mouse_entered.connect(mouse_entered_dice_options)
+		dice_options.get_node("roll_option").mouse_entered.connect(mouse_entered_dice_options)
+		dice_options.get_node("lock_option").mouse_entered.connect(mouse_entered_dice_options)
+		dice_options.get_node("draw_option").mouse_exited.connect(mouse_exited_dice_options)
+		dice_options.get_node("roll_option").mouse_exited.connect(mouse_exited_dice_options)
+		dice_options.get_node("lock_option").mouse_exited.connect(mouse_exited_dice_options)
+		dice_options.set_visible(false)
 		
 	print("Children ", hud.get_node("Bottom Bar/Current Dice").get_children())
 	
@@ -277,6 +304,14 @@ func mouse_enter_upcoming_panel():
 func mouse_exit_upcoming_panel():
 	print("Mouse Exited Panel")
 	
+func mouse_entered_dice_options():
+	print("Mouse Entered dice Options")
+	dice_options_displayed = true
+	
+func mouse_exited_dice_options():
+	print("Mouse Exited dice Options")
+	dice_options_displayed = false
+	
 func set_gamestate(state):
 	game_state = state
 	
@@ -290,6 +325,8 @@ func update_dice_count(active, deactive):
 		score_phases += 1
 		if (cards_in_playable == score_phases):
 			score_phases = 0
+			#Reset array
+			current_dice_data = []
 			SignalManager.populate_playable_with_upcoming.emit(cards_in_playable)
 			SignalManager.update_upcoming_sprites.emit()
 			SignalManager.update_playable_sprites.emit()

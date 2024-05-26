@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://sjyned21bbs"]
 
-[node name="Control" type="Control"]
+[node name="dice_options_root" type="Control"]
 layout_mode = 3
 anchor_left = 0.006
 anchor_right = 0.006
@@ -8,6 +8,7 @@ offset_left = 5.32
 offset_right = 5.32
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="draw_option" type="Button" parent="."]
 layout_mode = 0
