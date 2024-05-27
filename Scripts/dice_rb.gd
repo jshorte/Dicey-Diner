@@ -18,10 +18,12 @@ var floating_text = preload("res://Scenes/floating_text.tscn")
 @onready var timer = $Timer
 @onready var dice_radius = dice_collision_shape.shape.radius
 @onready var roll_animation = $AnimatedSprite2D
+@onready var padlock_sprite = $PadlockSprite
 
 var affected_by_garlic = false
 var is_moving = false
 var transmit_moving_signals = true
+var dice_locked = false
 var timed_out = false
 var score_updated = false
 var arrow_scene = preload("res://Scenes/arrow.tscn")
@@ -268,7 +270,8 @@ func _physics_process(delta: float) -> void:
 		
 	#Dice is moving on the playing field
 	if (dice_status == Global.DiceState.PASSIVE && is_moving && transmit_moving_signals):
-		roll_animation.play()
+		if(!dice_locked):
+			roll_animation.play()
 		SignalManager.update_dice_count.emit(1, 0)
 		score_updated = false
 		transmit_moving_signals = false		
@@ -297,8 +300,9 @@ func move_active_dice(dice_centre_position, mouse_to_dice_position):
 	timer.start(0.1)	
 	#Make a bar which represents this clamped value
 	dice_rb.apply_central_impulse(-dir * impulse_strength)
-	print("Velocity = ", linear_velocity)
-	roll_animation.play()
+	print("Dice Locked = ", dice_locked)
+	if(!dice_locked):
+		roll_animation.play()
 	is_moving = true
 
 #Grace period for velocity check
@@ -389,8 +393,11 @@ func roll_pressed():
 	#current_value = available_values[roll_animation.frame]
 	SignalManager.update_dice_sprite.emit(self)
 	
-func lock_pressed():
-	print("Pressed Lock")
+#TODO: Could make this one function and pass through bool
+func set_lock_option_pressed(locked):
+	dice_locked = locked
+	padlock_sprite.set_visible(locked)
+	SignalManager.set_lock_option_visibility.emit(self, dice_locked)
 
 #######################################################
 ###						CODE BANK					###

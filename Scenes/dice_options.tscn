@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://sjyned21bbs"]
+[gd_scene load_steps=2 format=3 uid="uid://sjyned21bbs"]
+
+[ext_resource type="StyleBox" uid="uid://dmful4r8udbfr" path="res://Art/Blackboard.tres" id="1_6flhj"]
 
 [node name="dice_options_root" type="Control"]
 layout_mode = 3
@@ -10,10 +12,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = -8.0
+offset_top = -119.0
+offset_right = 69.0
+offset_bottom = -9.0
+theme_override_styles/panel = ExtResource("1_6flhj")
+
 [node name="draw_option" type="Button" parent="."]
 layout_mode = 0
 offset_top = -112.0
-offset_right = 50.0
+offset_right = 61.0
 offset_bottom = -80.0
 theme_type_variation = &"FlatButton"
 text = "Draw"
@@ -21,7 +31,7 @@ text = "Draw"
 [node name="roll_option" type="Button" parent="."]
 layout_mode = 0
 offset_top = -80.0
-offset_right = 50.0
+offset_right = 61.0
 offset_bottom = -48.0
 theme_type_variation = &"FlatButton"
 text = "Roll"
@@ -29,7 +39,16 @@ text = "Roll"
 [node name="lock_option" type="Button" parent="."]
 layout_mode = 0
 offset_top = -48.0
-offset_right = 50.0
+offset_right = 61.0
 offset_bottom = -17.0
 theme_type_variation = &"FlatButton"
 text = "Lock"
+
+[node name="unlock_option" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_top = -48.0
+offset_right = 50.0
+offset_bottom = -17.0
+theme_type_variation = &"FlatButton"
+text = "Unlock"

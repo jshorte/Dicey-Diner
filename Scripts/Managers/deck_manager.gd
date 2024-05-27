@@ -24,7 +24,7 @@ func _init() -> void:
 
 func _ready():		
 	#TODO: This will come from the player
-	var player_dice = [garlic, garlic, garlic, basic, basic, basic]
+	var player_dice = [garlic, garlic, basic, basic, basic, basic]
 	#var player_dice = [basic]
 	load_player_dice(player_dice)
 	

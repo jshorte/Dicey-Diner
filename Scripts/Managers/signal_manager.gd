@@ -38,3 +38,5 @@ signal remove_from_upcoming_panel
 signal set_gamestate
 signal update_dice_count
 signal update_dice_sprite
+
+signal set_lock_option_visibility

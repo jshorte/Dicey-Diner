@@ -46,6 +46,7 @@ func _init() -> void:
 	SignalManager.connect("set_gamestate", set_gamestate)
 	SignalManager.connect("update_dice_count", update_dice_count)
 	SignalManager.connect("update_dice_sprite", update_dice_sprite)
+	SignalManager.connect("set_lock_option_visibility", set_lock_option_visibility)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
@@ -257,27 +258,38 @@ func update_playable_panel(dice_array):
 		
 		#var is_odd = dice_array.size() % 2		
 		var sprite = TextureRect.new()
+		var padlock_sprite = TextureRect.new()
 		var dice_options = dice_options_scene.instantiate()
 		var current_dice_data_dict
+		var dice_locked = true
 		
 		sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
+		padlock_sprite.texture = load("res://Art/Padlock.aseprite")
+		padlock_sprite.name = "Padlock"
+		padlock_sprite.set_visible(false)
 		hud.get_node("Bottom Bar/Current Dice/VBoxContainer/HBoxContainer").add_child(sprite)
+		sprite.add_child(padlock_sprite)
 		sprite.mouse_entered.connect(mouse_entered_playable.bind(dice, sprite))
 		sprite.mouse_exited.connect(mouse_exited_playable.bind(dice, sprite))
 		
 		current_dice_data_dict = {dice : sprite}
 		current_dice_data.push_back(current_dice_data_dict)
 		
-		sprite.add_child(dice_options)		
+		sprite.add_child(dice_options, true)		
 		dice_options.get_node("draw_option").connect("pressed", dice.draw_pressed.bind())
 		dice_options.get_node("roll_option").connect("pressed", dice.roll_pressed.bind())
-		dice_options.get_node("lock_option").connect("pressed", dice.lock_pressed.bind())
+		dice_options.get_node("lock_option").connect("pressed", dice.set_lock_option_pressed.bind(dice_locked))
+		dice_options.get_node("unlock_option").connect("pressed", dice.set_lock_option_pressed.bind(!dice_locked))
+		
 		dice_options.get_node("draw_option").mouse_entered.connect(mouse_entered_dice_options)
 		dice_options.get_node("roll_option").mouse_entered.connect(mouse_entered_dice_options)
 		dice_options.get_node("lock_option").mouse_entered.connect(mouse_entered_dice_options)
+		dice_options.get_node("unlock_option").mouse_entered.connect(mouse_entered_dice_options)
+		
 		dice_options.get_node("draw_option").mouse_exited.connect(mouse_exited_dice_options)
 		dice_options.get_node("roll_option").mouse_exited.connect(mouse_exited_dice_options)
 		dice_options.get_node("lock_option").mouse_exited.connect(mouse_exited_dice_options)
+		dice_options.get_node("unlock_option").mouse_exited.connect(mouse_exited_dice_options)
 		dice_options.set_visible(false)
 		
 	print("Children ", hud.get_node("Bottom Bar/Current Dice").get_children())
@@ -311,6 +323,17 @@ func mouse_entered_dice_options():
 func mouse_exited_dice_options():
 	print("Mouse Exited dice Options")
 	dice_options_displayed = false
+	
+func set_lock_option_visibility(dice, visible):
+	print("Dice: ", dice)
+	print("Current Dice Data: ", current_dice_data)
+	
+	for dict in current_dice_data:
+		if(dict.has(dice)):
+			print("Found ", dict[dice])
+			dict[dice].get_node("dice_options_root").get_node("lock_option").set_visible(!visible)
+			dict[dice].get_node("dice_options_root").get_node("unlock_option").set_visible(visible)
+			dict[dice].get_node("Padlock").set_visible(visible)
 	
 func set_gamestate(state):
 	game_state = state
