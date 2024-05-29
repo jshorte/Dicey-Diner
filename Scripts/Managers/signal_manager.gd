@@ -29,11 +29,17 @@ signal update_total_score
 signal update_dice_score_label_to_default
 signal update_dice_score_label_to_hovered
 
+signal redraw_dice
+signal populate_upcoming
 signal populate_playable_with_upcoming
 signal update_upcoming_sprites
 signal update_playable_sprites
 signal remove_from_playable_pile
+
+signal add_to_upcoming_panel
 signal remove_from_upcoming_panel
+signal add_to_playable_panel
+signal remove_from_playable_panel
 
 signal set_gamestate
 signal update_dice_count

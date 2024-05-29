@@ -42,11 +42,17 @@ func _init() -> void:
 	SignalManager.connect("add_dice_to_upcoming", update_upcoming_panel)	
 	SignalManager.connect("add_dice_to_playable", update_playable_panel)
 	SignalManager.connect("move_dice_offscreen", move_dice_offscreen)
+	
+	SignalManager.connect("add_to_upcoming_panel", add_to_upcoming_panel)	
 	SignalManager.connect("remove_from_upcoming_panel", remove_from_upcoming_panel)
+	
 	SignalManager.connect("set_gamestate", set_gamestate)
 	SignalManager.connect("update_dice_count", update_dice_count)
 	SignalManager.connect("update_dice_sprite", update_dice_sprite)
-	SignalManager.connect("set_lock_option_visibility", set_lock_option_visibility)
+	SignalManager.connect("set_lock_option_visibility", set_lock_option_visibility)	
+	
+	SignalManager.connect("add_to_playable_panel", add_to_playable_panel)
+	SignalManager.connect("remove_from_playable_panel", remove_from_playable_panel)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
@@ -203,45 +209,124 @@ func mouse_exited_playable(dice, sprite):
 	#hovered_dice_sprite.get_node("dice_options_root").set_visible(false)
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
+	
+func add_to_upcoming_panel(dice):
+	var sprite = TextureRect.new()
+	var dice_data_dict : Dictionary = {}
+	
+	sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
+	hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").add_child(sprite)
+	sprite.mouse_entered.connect(mouse_entered_upcoming.bind(dice, sprite))
+	sprite.mouse_exited.connect(mouse_exited_upcoming.bind(dice, sprite))
+	
+	dice_data_dict = {dice : sprite}
+	print("New pair created:", dice_data_dict)
+	dice_data.push_back(dice_data_dict)
+	
 
 func remove_from_upcoming_panel(dice):
-	for dict in dice_data:
-		if dict.has(dice):
-			dict[dice].queue_free()
 	
+	print("-9 Removing Dice")
+	print("-9 Looking for ", dice, " in ", dice_data)
+	
+	for dict in dice_data:
+		
+		print("-9 Looping through ", dict)
+		
+		if dict.has(dice):
+			
+			print("-9 ", dice, " found in ", dict)
+			
+			dict[dice].queue_free()
+			dict.erase(dice)
+			
+			print("-9 ", dice, " removed from ", dict)
+			
+func add_to_playable_panel(dice):
+	var sprite = TextureRect.new()
+	var padlock_sprite = TextureRect.new()
+	var dice_options = dice_options_scene.instantiate()
+	var current_dice_data_dict
+	var dice_locked = true
+	
+	sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
+	padlock_sprite.texture = load("res://Art/Padlock.aseprite")
+	padlock_sprite.name = "Padlock"
+	padlock_sprite.set_visible(false)
+	hud.get_node("Bottom Bar/Current Dice/VBoxContainer/HBoxContainer").add_child(sprite)
+	sprite.add_child(padlock_sprite)
+	sprite.mouse_entered.connect(mouse_entered_playable.bind(dice, sprite))
+	sprite.mouse_exited.connect(mouse_exited_playable.bind(dice, sprite))
+	
+	current_dice_data_dict = {dice : sprite}
+	current_dice_data.push_back(current_dice_data_dict)
+	
+	sprite.add_child(dice_options, true)		
+	dice_options.get_node("draw_option").connect("pressed", dice.draw_pressed.bind())
+	dice_options.get_node("roll_option").connect("pressed", dice.roll_pressed.bind())
+	dice_options.get_node("lock_option").connect("pressed", dice.set_lock_option_pressed.bind(dice_locked))
+	dice_options.get_node("unlock_option").connect("pressed", dice.set_lock_option_pressed.bind(!dice_locked))
+	
+	dice_options.get_node("draw_option").mouse_entered.connect(mouse_entered_dice_options)
+	dice_options.get_node("roll_option").mouse_entered.connect(mouse_entered_dice_options)
+	dice_options.get_node("lock_option").mouse_entered.connect(mouse_entered_dice_options)
+	dice_options.get_node("unlock_option").mouse_entered.connect(mouse_entered_dice_options)
+	
+	dice_options.get_node("draw_option").mouse_exited.connect(mouse_exited_dice_options)
+	dice_options.get_node("roll_option").mouse_exited.connect(mouse_exited_dice_options)
+	dice_options.get_node("lock_option").mouse_exited.connect(mouse_exited_dice_options)
+	dice_options.get_node("unlock_option").mouse_exited.connect(mouse_exited_dice_options)
+	dice_options.set_visible(false)
+		
+	print("Children ", hud.get_node("Bottom Bar/Current Dice").get_children())
+
+#TODO: Check this works
+func remove_from_playable_panel(dice):	
+	for dict in current_dice_data:
+		if dict.has(dice):			
+			dict[dice].queue_free()
+			dict.erase(dice)	
 	
 func update_upcoming_panel(dice_array):
 	print("Upcoming Panel ", dice_array.size())
 	
 	var current_dice_array := []
+	var dice_data_dict : Dictionary = {}
 	
-	for dict in dice_data:
-		current_dice_array.push_back(dict.keys()[0])
+	#TODO: Whats this
+	#for dict in dice_data:
+	#	current_dice_array.push_back(dict.keys()[0])
 	
 	#TODO: Currently adding dice regardless if they already exist
-	for dice in dice_array:			
-		#We only want to create textures which dont already exist. Return if we've already created one.
-		if(current_dice_array.has(dice)):
-			print("Key already exists: ", dice)
-			return
+	for dice in dice_array:	
+		if !dice_data.has(dice):
+			print("Dice Data: ", dice_data, " does not have dice ", dice)
+			#We only want to create textures which dont already exist. Return if we've already created one.
+			if(current_dice_array.has(dice)):
+				print("Key already exists: ", dice)
+				return
+				
+			var sprite = TextureRect.new()
+			#var dice_data_dict
 			
-		var sprite = TextureRect.new()
-		var dice_data_dict
-		
-		sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
-		hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").add_child(sprite)
-		sprite.mouse_entered.connect(mouse_entered_upcoming.bind(dice, sprite))
-		sprite.mouse_exited.connect(mouse_exited_upcoming.bind(dice, sprite))
-		
-		dice_data_dict = {dice : sprite}
-		print("New pair created:", dice_data_dict)
-		dice_data.push_back(dice_data_dict)
-		#hud.get_node("Bottom Bar/Upcoming Dice").add_icon_item(sprite, true)
-		
-		#TODO (Remove) Removed as positioning dealt with using V&H Boxes 
-		#sprite.position = Vector2(x, y)
-		#x += spacing
-		#TEST CHANGE
+			#sprite.texture = load(dice.get_node("AnimatedSprite2D").sprite_frames.get_frame_texture("All", dice.available_values_index).get_path())
+			#hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").add_child(sprite)
+			#sprite.mouse_entered.connect(mouse_entered_upcoming.bind(dice, sprite))
+			#sprite.mouse_exited.connect(mouse_exited_upcoming.bind(dice, sprite))
+			
+			dice_data_dict = {dice : sprite}
+			print("New pair created:", dice_data_dict)
+			dice_data.push_back(dice_data_dict)
+			#hud.get_node("Bottom Bar/Upcoming Dice").add_icon_item(sprite, true)
+			
+			#TODO (Remove) Removed as positioning dealt with using V&H Boxes 
+			#sprite.position = Vector2(x, y)
+			#x += spacing
+			#TEST CHANGE
+	#Add all new pairs
+	#print("Upcoming update before dice data: ", dice_data)
+	#dice_data.push_back(dice_data_dict)
+	#print("Upcoming update after dice data: ", dice_data)
 
 
 func update_playable_panel(dice_array):	
@@ -347,10 +432,13 @@ func update_dice_count(active, deactive):
 		SignalManager.set_gamestate.emit(Global.GameState.SELECT)
 		score_phases += 1
 		if (cards_in_playable == score_phases):
+			#TODO: This will be the players draw amount
+			var draw_amount = 2
 			score_phases = 0
 			#Reset array
 			current_dice_data = []
 			SignalManager.populate_playable_with_upcoming.emit(cards_in_playable)
+			SignalManager.populate_upcoming.emit(draw_amount)
 			SignalManager.update_upcoming_sprites.emit()
 			SignalManager.update_playable_sprites.emit()
 	

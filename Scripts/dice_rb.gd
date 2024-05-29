@@ -168,17 +168,17 @@ func raycast_query2d(pointA, pointB) -> Dictionary:
 	return {}
 
 func _on_body_entered(body:Node):
-	total_score = available_values[roll_animation.frame]
+	var face_value = available_values[roll_animation.frame]
 	
 	if body is RigidBody2D: #Collided with a dice		
 		if body.dice_template.dice_type == Global.DiceType.BASIC: #Pizza dice
 			print("Pizza entered")
 		elif body.dice_template.dice_type == Global.DiceType.GARLIC: #Garlic dice
 			print("Garlic entered")
-			if !affected_by_garlic:
+			if !affected_by_garlic && (!dice_template.dice_type == Global.DiceType.GARLIC):
 				print("Not affected by garlic - calculate score")
-				print("Current Score: ", total_score, " Garlic Value: ", body.available_values[body.roll_animation.frame], " Total Score: ", total_score * body.available_values[body.roll_animation.frame])
-				total_score *= body.available_values[body.roll_animation.frame]
+				print("Face Value: ", face_value, "Collisions ", collisions, " Garlic Value: ", body.available_values[body.roll_animation.frame], " Total Score: ", face_value * (collisions + body.available_values[body.roll_animation.frame]))
+				total_score *= (collisions + body.available_values[body.roll_animation.frame])
 				affected_by_garlic = true
 				
 
@@ -187,11 +187,14 @@ func _physics_process(delta: float) -> void:
 	#if !isActive:		
 		#arrow.hide()	
 	#Generic collision
-	if !get_colliding_bodies().is_empty():		
+	if !get_colliding_bodies().is_empty():
+		#TODO: Lets work out collion scoring smarter
+		if (dice_template.dice_type == Global.DiceType.BASIC):
+			collisions += 1
+			
 		var new_bam = bam_scene.instantiate()
 		get_parent().add_child(new_bam)
 		new_bam.global_position = dice_rb.transform.origin		
-		collisions += 1
 		print("Collisions ", get_colliding_bodies())		
 		
 		var floating_text_instance = floating_text.instantiate()
@@ -384,6 +387,7 @@ func update_position(dice):
 
 func draw_pressed():
 	print("Pressed Draw")
+	SignalManager.redraw_dice.emit(self)
 	
 func roll_pressed():
 	print("Pressed Roll")
