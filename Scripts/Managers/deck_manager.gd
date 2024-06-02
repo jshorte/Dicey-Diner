@@ -138,19 +138,29 @@ func redraw_dice(dice):
 
 #Base versions of each dice type TODO: Apply modifications to particular dice seperately
 func load_player_dice(dice_type_array):	
-	for type in dice_type_array:		
-		match type:
+	var uid : int = 1
+	for type in dice_type_array:
+		var blank_dice = dice_scene.instantiate()
+		match type:		
 			Global.DiceType.BASIC:				
-				var blank_dice = dice_scene.instantiate()
 				blank_dice.dice_template = load(basic_dice_template_path)
-				SignalManager.initialise_dice_values.emit(blank_dice)
-				get_tree().root.add_child.call_deferred(blank_dice)				
-				draw_pile.append(blank_dice)
-				SignalManager.move_dice_offscreen.emit(blank_dice)
+				#blank_dice.unique_id = uid
+				#uid += 1
+				#SignalManager.initialise_dice_values.emit(blank_dice)
+				#get_tree().root.add_child.call_deferred(blank_dice)				
+				#draw_pile.append(blank_dice)
+				#SignalManager.move_dice_offscreen.emit(blank_dice)
 			Global.DiceType.GARLIC: 
-				var blank_dice = dice_scene.instantiate()
 				blank_dice.dice_template = load(garlic_dice_template_path)
-				SignalManager.initialise_dice_values.emit(blank_dice)
-				get_tree().root.add_child.call_deferred(blank_dice)				
-				draw_pile.append(blank_dice)
-				SignalManager.move_dice_offscreen.emit(blank_dice)
+				#blank_dice.unique_id = uid
+				#uid += 1
+				#SignalManager.initialise_dice_values.emit(blank_dice)
+				#get_tree().root.add_child.call_deferred(blank_dice)				
+				#draw_pile.append(blank_dice)
+				#SignalManager.move_dice_offscreen.emit(blank_dice)
+		blank_dice.unique_id = uid
+		uid += 1
+		SignalManager.initialise_dice_values.emit(blank_dice)
+		get_tree().root.add_child.call_deferred(blank_dice)				
+		draw_pile.append(blank_dice)
+		SignalManager.move_dice_offscreen.emit(blank_dice)

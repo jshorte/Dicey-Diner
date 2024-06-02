@@ -9,6 +9,7 @@ var floating_text = preload("res://Scenes/floating_text.tscn")
 
 @export var dice_template : Resource = null
 @export var isActive : bool
+@export var unique_id : int
 #@onready var dice_rb = $"."
 @onready var dice_rb = $"."
 @onready var dice_collision_shape = $CollisionShape2D
@@ -36,7 +37,8 @@ var old_transform = null
 var rb_offset = null
 var arrow = null
 var collisions = 0
-var current_value = 0
+var bonus_score = 0
+var face_value = 0
 var total_score = 0
 var available_values_index = 0;
 
@@ -167,19 +169,27 @@ func raycast_query2d(pointA, pointB) -> Dictionary:
 		
 	return {}
 
-func _on_body_entered(body:Node):
-	var face_value = available_values[roll_animation.frame]
-	
-	if body is RigidBody2D: #Collided with a dice		
-		if body.dice_template.dice_type == Global.DiceType.BASIC: #Pizza dice
-			print("Pizza entered")
-		elif body.dice_template.dice_type == Global.DiceType.GARLIC: #Garlic dice
-			print("Garlic entered")
-			if !affected_by_garlic && (!dice_template.dice_type == Global.DiceType.GARLIC):
-				print("Not affected by garlic - calculate score")
-				print("Face Value: ", face_value, "Collisions ", collisions, " Garlic Value: ", body.available_values[body.roll_animation.frame], " Total Score: ", face_value * (collisions + body.available_values[body.roll_animation.frame]))
-				total_score *= (collisions + body.available_values[body.roll_animation.frame])
-				affected_by_garlic = true
+func _on_body_entered(body:Node):	
+	if body is RigidBody2D: #Collided with a dice
+		
+		var face_value = available_values[roll_animation.frame]
+		var body_face_value = body.available_values[body.roll_animation.frame]
+		
+		print("Body AV: ", body.available_values)
+		print("Body RAF: ", body.roll_animation.frame)
+		print("Body FV: ", body_face_value)
+		
+		SignalManager.process_dice_collision.emit(self, body, face_value, body_face_value)
+		
+		#if body.dice_template.dice_type == Global.DiceType.BASIC: #Pizza dice
+		#	print("Pizza entered")
+		#elif body.dice_template.dice_type == Global.DiceType.GARLIC: #Garlic dice
+		#	print("Garlic entered")
+		#	if !affected_by_garlic && (!dice_template.dice_type == Global.DiceType.GARLIC):
+		#		print("Not affected by garlic - calculate score")
+		#		print("Face Value: ", face_value, "Collisions ", bonus_score, " Garlic Value: ", body.available_values[body.roll_animation.frame], " Total Score: ", face_value * (collisions + body.available_values[body.roll_animation.frame]))
+		#		total_score *= (bonus_score + body.available_values[body.roll_animation.frame])
+		#		affected_by_garlic = true
 				
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -190,7 +200,7 @@ func _physics_process(delta: float) -> void:
 	if !get_colliding_bodies().is_empty():
 		#TODO: Lets work out collion scoring smarter
 		if (dice_template.dice_type == Global.DiceType.BASIC):
-			collisions += 1
+			bonus_score += 1
 			
 		var new_bam = bam_scene.instantiate()
 		get_parent().add_child(new_bam)
@@ -198,7 +208,7 @@ func _physics_process(delta: float) -> void:
 		print("Collisions ", get_colliding_bodies())		
 		
 		var floating_text_instance = floating_text.instantiate()
-		floating_text_instance.value = collisions
+		floating_text_instance.value = bonus_score
 		add_child(floating_text_instance)
 		#TODO: Set position relative to size of currently applied sprite
 		#floating_text_instance.set_position
@@ -249,15 +259,15 @@ func _physics_process(delta: float) -> void:
 		#Update value to reflect that of the paused frame
 		#print("Available Values ", available_values)	
 		#print("Frame ", roll_animation.frame)		
-		current_value = available_values[roll_animation.frame]
-		total_score = current_value + collisions 
+		#face_value = available_values[roll_animation.frame]
+		#total_score = face_value + bonus_score 
 		
 		#TODO: Have phases (Selecting Phase / Active Phase / Scoring Phase)
 		#The reciver will look await scoring phase (probably updated here) and then calculate
 		#and update the score panel for each dice, comprised of its face value + bonus modifiers
 		if(!score_updated):
 			SignalManager.update_dice_count.emit(0, 1)
-			SignalManager.update_dice_score.emit(self)				
+			#SignalManager.update_dice_score.emit(self)				
 			score_updated = true
 		#SignalManager.update_total_score.emit()	
 		
@@ -346,7 +356,7 @@ func initialise_dice(dice):
 		
 		#Randomise initial number to use and display
 		available_values_index = randi() % available_values.size()
-		current_value = available_values[available_values_index]
+		face_value = available_values[available_values_index]
 	
 #TODO Notes: Dice have three states
 #1: Dice in holding area offscreen 
@@ -393,7 +403,7 @@ func roll_pressed():
 	print("Pressed Roll")
 	available_values_index = randi() % available_values.size()
 	roll_animation.frame = available_values_index
-	current_value = available_values[available_values_index]
+	face_value = available_values[available_values_index]
 	#current_value = available_values[roll_animation.frame]
 	SignalManager.update_dice_sprite.emit(self)
 	

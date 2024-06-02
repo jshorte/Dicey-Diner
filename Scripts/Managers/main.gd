@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 	 active_dice == null &&
 	 game_state == Global.GameState.SELECT):
 		#if (hovered_dice != active_dice):
-		print("Selected ", hovered_dice_ui, "with value", hovered_dice_ui.current_value)
+		print("Selected ", hovered_dice_ui, "with value", hovered_dice_ui.face_value)
 		#TODO: Update Panel when dice is selected
 		#hud.get_node("Bottom Bar/Upcoming Dice/VBoxContainer/HBoxContainer").remove_child(hovered_dice_ui)
 		dice_selected = true
@@ -180,17 +180,17 @@ func mouse_exited_main():
 	hovered_dice = null
 
 func mouse_entered_upcoming(dice, sprite):	
-	print("Mouse currently over ", dice, "with value ", dice.current_value)
+	print("Mouse currently over ", dice, "with value ", dice.face_value)
 	hovered_dice_ui = dice;	
 	#hovered_dice_sprite = sprite;
 	
 func mouse_exited_upcoming(dice, sprite):	
-	print("Mouse no longer over ", hovered_dice_ui, "with value ", hovered_dice_ui.current_value)
+	print("Mouse no longer over ", hovered_dice_ui, "with value ", hovered_dice_ui.face_value)
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
 	
 func mouse_entered_playable(dice, sprite):	
-	print("Mouse currently over ", dice, "with value ", dice.current_value)
+	print("Mouse currently over ", dice, "with value ", dice.face_value)
 	hovered_dice_ui = dice;	
 	hovered_dice_sprite = sprite;
 	
@@ -205,7 +205,7 @@ func mouse_entered_playable(dice, sprite):
 		current_sprite_data = hovered_dice_sprite
 	
 func mouse_exited_playable(dice, sprite):	
-	print("Mouse no longer over ", hovered_dice_ui, "with value ", hovered_dice_ui.current_value)
+	print("Mouse no longer over ", hovered_dice_ui, "with value ", hovered_dice_ui.face_value)
 	#hovered_dice_sprite.get_node("dice_options_root").set_visible(false)
 	hovered_dice_ui = null;
 	#hovered_dice_sprite = null;
@@ -226,21 +226,21 @@ func add_to_upcoming_panel(dice):
 
 func remove_from_upcoming_panel(dice):
 	
-	print("-9 Removing Dice")
-	print("-9 Looking for ", dice, " in ", dice_data)
+	print("Removing Dice")
+	print("Looking for ", dice, " in ", dice_data)
 	
 	for dict in dice_data:
 		
-		print("-9 Looping through ", dict)
+		print("Looping through ", dict)
 		
 		if dict.has(dice):
 			
-			print("-9 ", dice, " found in ", dict)
+			print(dice, " found in ", dict)
 			
 			dict[dice].queue_free()
 			dict.erase(dice)
 			
-			print("-9 ", dice, " removed from ", dict)
+			print(dice, " removed from ", dict)
 			
 func add_to_playable_panel(dice):
 	var sprite = TextureRect.new()

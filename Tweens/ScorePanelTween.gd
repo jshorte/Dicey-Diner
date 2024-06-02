@@ -88,13 +88,13 @@ func update_dice_score_label_to_hovered(dice):
 			dict[dice].get_node("Score Body Food Text").set_label_settings(dice_label_hovered)
 			dict[dice].get_node("Score Body Score Text").set_label_settings(dice_label_hovered)
 
-func update_dice_score(dice):
+func update_dice_score(dice, score):
 	var total_score_value = 0
 	
 	for dict in dice_array:
 		if dict.has(dice):
 			dict[dice].get_node("Score Body Food Text").text = dice.dice_name
-			dict[dice].get_node("Score Body Score Text").text = str(dice.total_score)
+			dict[dice].get_node("Score Body Score Text").text = str(score)
 			#total_score_value += dice.total_score
 			#total_score_text.text = str(total_score_value)		
 			#total_score_value += int(dict[dice].get_node("Score Body Score Text").text)

@@ -24,6 +24,7 @@ aseprite_executable_path="G:/SteamLibrary/steamapps/common/Aseprite/Aseprite.exe
 SignalManager="*res://Scripts/Managers/signal_manager.gd"
 DeckManager="*res://Scripts/Managers/deck_manager.gd"
 GlobalDefinitions="*res://Scripts/global_definitions.gd"
+ScoreManager="*res://Scripts/Managers/score_manager.gd"
 
 [display]
 

@@ -46,3 +46,5 @@ signal update_dice_count
 signal update_dice_sprite
 
 signal set_lock_option_visibility
+
+signal process_dice_collision
